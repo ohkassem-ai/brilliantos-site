@@ -5,18 +5,20 @@ function BeforeAfter() {
   const before = {
     label: 'BEFORE',
     sub: 'Manual workflow',
-    duration: '3 days',
-    durationSub: '4 humans · 19 hand-offs',
+    duration: '6 days',
+    durationSub: '4 humans · 28 hand-offs',
     steps: [
       { t: 'Mon', d: 'RFQ lands in inbox' },
-      { t: 'Tue', d: 'Ops chases supplier prices' },
-      { t: 'Wed', d: 'Quote drafted in Excel' },
-      { t: 'Thu', d: 'Quote sent · 32% margin' },
+      { t: 'Tue', d: 'Back-and-forth on specs + drawings' },
+      { t: 'Wed', d: 'Ops chases supplier prices' },
+      { t: 'Thu', d: 'Quote drafted in Excel' },
+      { t: 'Fri', d: 'Internal review · revisions' },
+      { t: 'Mon', d: 'Quote sent · 32% margin' },
     ],
     metrics: [
-      { v: '3 days',   k: 'Turnaround' },
+      { v: '6 days',   k: 'Turnaround' },
       { v: '32%',      k: 'Margin' },
-      { v: '4.2 hrs',  k: 'Founder time' },
+      { v: '$1.4k',    k: 'Cost / quote' },
     ],
     accent: false,
   };
@@ -26,15 +28,16 @@ function BeforeAfter() {
     duration: '6 min',
     durationSub: '1 tap to approve',
     steps: [
-      { t: '09:14', d: 'Autopilot parses RFQ + supplier prices' },
-      { t: '09:17', d: 'Quote drafted at 38% margin' },
-      { t: '09:18', d: 'You approve from phone' },
+      { t: '09:14', d: 'Autopilot parses RFQ + specs + drawings' },
+      { t: '09:16', d: 'Supplier prices pulled · clarifications drafted' },
+      { t: '09:17', d: 'Quote drafted at 38% margin · auto-reviewed' },
+      { t: '09:19', d: 'You approve from phone' },
       { t: '09:20', d: 'Sent · filed in CRM · follow-up armed' },
     ],
     metrics: [
       { v: '6 min',   k: 'Turnaround' },
       { v: '38%',     k: 'Margin' },
-      { v: '0.1 hr',  k: 'Founder time' },
+      { v: '$22',     k: 'Cost / quote' },
     ],
     accent: true,
   };

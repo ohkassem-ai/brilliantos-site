@@ -422,7 +422,7 @@ function Pricing() {
                   color: 'var(--accent)'
                 }}>● Most chosen</div>
               )}
-              <div className="display italic" style={{ fontSize: 40, color: 'var(--accent)' }}>{t.n}</div>
+              <div className="tier-roman mono" style={{ color: 'var(--accent)' }}>{t.n}</div>
               <h3 className="display" style={{ fontSize: 36, margin: '12px 0 4px' }}>{t.name}</h3>
               <p className="small muted" style={{ marginBottom: 28 }}>{t.tagline}</p>
 
@@ -440,15 +440,16 @@ function Pricing() {
               }}>● Founding cohort price</div>
               <div className="small muted" style={{ marginBottom: 28 }}>{t.sub}</div>
 
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'grid', gap: 10 }} className="small">
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexDirection: 'column', gap: 10 }} className="small">
                 {t.what.map(w => (
-                  <li key={w} style={{ display: 'grid', gridTemplateColumns: '14px 1fr', gap: 10, alignItems: 'start', color: 'var(--ink-2)' }}>
+                  <li key={w} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', color: 'var(--ink-2)' }}>
                     <span style={{
                       marginTop: 7,
                       width: 6, height: 6, borderRadius: '50%',
-                      background: t.featured ? 'var(--accent)' : 'var(--ink)'
+                      background: t.featured ? 'var(--accent)' : 'var(--ink)',
+                      flexShrink: 0
                     }}></span>
-                    {w}
+                    <span>{w}</span>
                   </li>
                 ))}
               </ul>

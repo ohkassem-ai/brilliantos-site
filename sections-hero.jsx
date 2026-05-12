@@ -129,7 +129,7 @@ function Hero() {
           }}>
             <AutopilotTerminal />
             <div>
-              <div className="eyebrow" style={{ marginBottom: 18 }}>What just happened</div>
+              <div className="eyebrow" style={{ marginBottom: 18 }}>01 / Under the hood</div>
               <h3 className="display h3" style={{ margin: '0 0 16px', maxWidth: '18ch' }}>
                 A swarm of agents. <span className="italic" style={{ color: 'var(--accent)' }}>One shared brain.</span>
               </h3>
@@ -141,9 +141,10 @@ function Hero() {
 
               </p>
               <div style={{ marginTop: 28, display: 'grid', gap: 14, fontSize: 14 }}>
-                <Stat k="Tools connected" v="14" sub="email · CRM · ERP · Xero · Slack" />
+                <Stat k="Tools connected" v="14" sub="email · CRM · QuickBooks · Xero · Slack" />
                 <Stat k="Time recovered" v="22 hrs/wk" sub="across founder + ops lead" />
-                <Stat k="Quote → sent" v="6 min" sub="down from 2 days" />
+                <Stat k="Cost saved" v="$14k / mo" sub="ops + tooling combined" />
+                <Stat k="Quote → sent" v="6 min" sub="down from 6 days" />
               </div>
             </div>
           </div>

@@ -265,6 +265,45 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
 .content::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 
 .mono{font-family:var(--font-mono)}
+
+/* TOASTS — universal feedback for clicks */
+.toast-container{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:column;gap:8px;z-index:9999;pointer-events:none;align-items:flex-end}
+.toast{background:var(--ink);color:var(--bg);padding:10px 14px 10px 12px;border-radius:var(--radius-md);font-size:12.5px;font-weight:500;box-shadow:0 10px 28px -12px rgba(0,0,0,.45);display:inline-flex;align-items:center;gap:9px;transform:translateX(16px);opacity:0;transition:transform .25s ease, opacity .25s ease;max-width:340px;line-height:1.35}
+.toast.in{transform:translateX(0);opacity:1}
+.toast .check{color:oklch(0.78 0.16 150);font-weight:700;font-family:var(--font-mono);font-size:13px}
+.toast .meta{color:oklch(0.7 0.012 75);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;margin-left:6px}
+
+/* Autopilot pause toggle */
+.sidebar-foot{cursor:pointer;transition:color .15s, background .15s;user-select:none}
+.sidebar-foot:hover{background:var(--bg-3)}
+.sidebar-foot.paused .dot{background:var(--warn);animation:ap-pulse 1.5s ease-in-out infinite}
+.sidebar-foot.paused{color:var(--warn)}
+@keyframes ap-pulse{50%{opacity:.4}}
+
+/* Approve-and-send button success state */
+.btn.is-done{background:var(--ok)!important;border-color:var(--ok)!important;color:#fff!important;pointer-events:none}
+
+/* Animated feed insert */
+.feed-item.is-new{animation:feed-pop .45s ease}
+@keyframes feed-pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.feed-item.is-new .feed-time{color:var(--ok);font-weight:600}
+
+/* Clickable priority feed rows */
+.feed-item[data-feed]{cursor:pointer;transition:background .15s, padding-left .15s;border-radius:6px;padding-left:4px;margin-left:-4px}
+.feed-item[data-feed]:hover{background:var(--bg-2);padding-left:8px}
+
+/* Feed detail screen — banner stripe per category */
+.fd-hero{padding:24px 28px;border-bottom:1px solid var(--rule);background:var(--bg-2)}
+.fd-hero .fd-kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.fd-hero .fd-kicker .pip{width:8px;height:8px;border-radius:50%}
+.fd-hero h2{font-size:22px;font-weight:500;letter-spacing:-.015em;margin-bottom:6px}
+.fd-hero .fd-sub{font-size:13px;color:var(--ink-2);max-width:60ch;line-height:1.5}
+.fd-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;padding:20px 28px 28px}
+.fd-rec{background:var(--accent-soft);border:1px solid color-mix(in oklch, var(--accent) 30%, var(--rule));border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:14px}
+.fd-rec .fd-rec-label{font-size:10px;font-family:var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-weight:600}
+.fd-rec .fd-rec-body{font-size:13px;color:var(--ink-2);line-height:1.55}
+.fd-rec .fd-rec-body b{color:var(--ink)}
+.fd-actions{display:flex;gap:10px;margin-top:18px}
 </style>
 </head>
 <body>
@@ -349,11 +388,11 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
         <div class="two-col">
           <div class="card">
             <div class="section-label">Priority feed · autopilot</div>
-            <div class="feed-item"><div class="feed-dot feed-dot-amber"></div><div class="feed-text"><b>M. Patel</b> — quote expires in 3 days. Follow-up drafted.</div><div class="feed-time">now</div></div>
-            <div class="feed-item"><div class="feed-dot feed-dot-red"></div><div class="feed-text"><b>Atlas Build Co.</b> — 40% milestone invoice unpaid 7d. Nudge queued.</div><div class="feed-time">2h</div></div>
-            <div class="feed-item"><div class="feed-dot feed-dot-blue"></div><div class="feed-text"><b>K. Morgan</b> — material selection meeting tomorrow 10:00.</div><div class="feed-time">5h</div></div>
-            <div class="feed-item"><div class="feed-dot feed-dot-green"></div><div class="feed-text"><b>Northgate</b> — midpoint payment received <span class="mono">$3,000</span></div><div class="feed-time">1d</div></div>
-            <div class="feed-item"><div class="feed-dot feed-dot-amber"></div><div class="feed-text"><b>New inbound lead</b> — S. Reilly via website form. Triaged.</div><div class="feed-time">1d</div></div>
+            <div class="feed-item" data-feed="patel"><div class="feed-dot feed-dot-amber"></div><div class="feed-text"><b>M. Patel</b> — quote expires in 3 days. Follow-up drafted.</div><div class="feed-time">now</div></div>
+            <div class="feed-item" data-feed="atlas"><div class="feed-dot feed-dot-red"></div><div class="feed-text"><b>Atlas Build Co.</b> — 40% milestone invoice unpaid 7d. Nudge queued.</div><div class="feed-time">2h</div></div>
+            <div class="feed-item" data-feed="morgan"><div class="feed-dot feed-dot-blue"></div><div class="feed-text"><b>K. Morgan</b> — material selection meeting tomorrow 10:00.</div><div class="feed-time">5h</div></div>
+            <div class="feed-item" data-feed="northgate"><div class="feed-dot feed-dot-green"></div><div class="feed-text"><b>Northgate</b> — midpoint payment received <span class="mono">$3,000</span></div><div class="feed-time">1d</div></div>
+            <div class="feed-item" data-feed="reilly"><div class="feed-dot feed-dot-amber"></div><div class="feed-text"><b>New inbound lead</b> — S. Reilly via website form. Triaged.</div><div class="feed-time">1d</div></div>
           </div>
           <div class="card">
             <div class="section-label">Today's calendar</div>
@@ -465,7 +504,7 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
         <div class="card">
           <div class="customer-row" data-customer="J. Patel" data-go="customer-detail">
             <div class="avatar av-blue">JP</div>
-            <div style="flex:1"><div class="cust-name">J. Patel</div><div class="cust-meta">Homeowner · Region A · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f99389988d9c95b99c81989489959cd79a9694">[email&#160;protected]</a></div></div>
+            <div style="flex:1"><div class="cust-name">J. Patel</div><div class="cust-meta">Homeowner · Region A · jpatel@example.com</div></div>
             <div><div class="cust-val">$6,742</div><div class="cust-jobs">1 active quote</div></div>
             <span class="badge badge-quote" style="margin-left:14px">Quote pending</span>
           </div>
@@ -1555,10 +1594,65 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
         </div>
       </div>
     </div>
+
+    <!-- FEED DETAIL (opened from priority-feed row click) -->
+    <div id="screen-feed-detail" class="screen">
+      <div class="topbar">
+        <div>
+          <button class="back-link" data-back="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Back to dashboard
+          </button>
+          <div class="topbar-title" id="fd-title">—</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn" id="fd-secondary">Snooze 1 day</button>
+          <button class="btn btn-accent" id="fd-primary">Approve →</button>
+        </div>
+      </div>
+      <div class="content" style="padding:0">
+        <div class="fd-hero">
+          <div class="fd-kicker"><span class="pip" id="fd-pip"></span><span id="fd-kicker">QUEUE · ITEM</span></div>
+          <h2 id="fd-h2">—</h2>
+          <div class="fd-sub" id="fd-sub">—</div>
+        </div>
+        <div class="fd-grid">
+          <div>
+            <div class="fd-rec">
+              <div class="fd-rec-label" id="fd-rec-label">● Autopilot recommendation</div>
+              <div class="fd-rec-body" id="fd-rec-body">—</div>
+            </div>
+
+            <div class="section-label" style="margin-top:18px">What autopilot did</div>
+            <div class="card" style="padding:6px 16px" id="fd-trail"></div>
+
+            <div class="section-label" style="margin-top:18px">Suggested actions</div>
+            <div class="card" style="padding:6px 16px" id="fd-actions-list"></div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="section-label">Key numbers</div>
+              <div id="fd-numbers"></div>
+            </div>
+
+            <div class="card">
+              <div class="section-label">Context</div>
+              <div id="fd-context" style="font-size:12.5px;color:var(--ink-2);line-height:1.6"></div>
+            </div>
+
+            <div class="card">
+              <div class="section-label">Related</div>
+              <div id="fd-related"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -1628,6 +1722,313 @@ function recalc(){
   var el=document.getElementById(id);
   if(el)el.addEventListener('input',recalc);
 });
+
+/* ─────────────────────────────────────────────────────────────
+   Below: makes every interactive surface feel responsive.
+   - Toast feedback for all unwired buttons
+   - Customer search filters the live list
+   - Approve & send quote runs a visible flow
+   - Autopilot rule toggle in sidebar
+   - Live activity feed appends new events on Dashboard
+   ───────────────────────────────────────────────────────────── */
+
+// Toast helper
+(function(){
+  var box=document.createElement('div');
+  box.className='toast-container';
+  document.body.appendChild(box);
+  window.toast=function(msg, meta){
+    var t=document.createElement('div');
+    t.className='toast';
+    t.innerHTML='<span class="check">✓</span><span>'+msg+'</span>'+(meta?'<span class="meta">'+meta+'</span>':'');
+    box.appendChild(t);
+    requestAnimationFrame(function(){t.classList.add('in')});
+    setTimeout(function(){t.classList.remove('in');setTimeout(function(){t.remove()},280)},2400);
+  };
+})();
+
+// Universal feedback for any .btn that isn't already wired to nav / quote-builder etc.
+document.querySelectorAll('.btn').forEach(function(b){
+  if(b.hasAttribute('data-go')||b.hasAttribute('data-back')||b.dataset.bound==='1') return;
+  // Selects manage themselves
+  if(b.tagName==='SELECT') return;
+  b.dataset.bound='1';
+  b.addEventListener('click',function(e){
+    e.preventDefault();
+    var label=(b.textContent||'').trim().replace(/^[+✓→\s]+/,'').replace(/\s*[→\s]+$/,'');
+    if(!label) label='Done';
+    toast(label, 'autopilot');
+  });
+});
+
+// Customer search — filter rows live
+var custSearch=document.querySelector('#screen-customers input.form-input');
+if(custSearch){
+  custSearch.addEventListener('input',function(){
+    var q=custSearch.value.trim().toLowerCase();
+    document.querySelectorAll('#screen-customers .customer-row').forEach(function(r){
+      var hit=!q || r.textContent.toLowerCase().indexOf(q)>=0;
+      r.style.display=hit?'':'none';
+    });
+  });
+}
+
+// Approve & send quote — special flow (replaces the universal toast for that button)
+var approveBtn=Array.prototype.find.call(document.querySelectorAll('#screen-lead-detail .btn.btn-accent'),function(b){
+  return /approve.*send/i.test(b.textContent||'');
+});
+if(approveBtn){
+  approveBtn.replaceWith(approveBtn.cloneNode(true));
+  approveBtn=Array.prototype.find.call(document.querySelectorAll('#screen-lead-detail .btn.btn-accent'),function(b){
+    return /approve.*send/i.test(b.textContent||'');
+  });
+  approveBtn.addEventListener('click',function(e){
+    e.preventDefault();
+    approveBtn.classList.add('is-done');
+    approveBtn.innerHTML='✓ Sent to client';
+    toast('Quote sent to client','PDF · CRM · Slack');
+    setTimeout(function(){toast('Follow-up armed for +7 days','autopilot rule')}, 900);
+  });
+}
+
+// Autopilot pause toggle in sidebar foot
+var foot=document.querySelector('.sidebar-foot');
+if(foot){
+  foot.addEventListener('click',function(){
+    var paused=foot.classList.toggle('paused');
+    var dot=foot.querySelector('.dot');
+    foot.innerHTML='';
+    if(dot) foot.appendChild(dot);
+    foot.appendChild(document.createTextNode(paused?'AUTOPILOT · PAUSED · TAP TO RESUME':'AUTOPILOT · 21 RULES ACTIVE'));
+    toast(paused?'Autopilot paused':'Autopilot resumed', paused?'no actions taken':'21 rules running');
+  });
+}
+
+// Priority feed row → open detail screen
+var FEED_DETAILS = {
+  patel: {
+    pipColor: 'var(--warn)',
+    kicker: 'QUEUE · QUOTE FOLLOW-UP',
+    title: 'M. Patel · quote expires in 3 days',
+    h2: 'Quote for J. Patel · single bath vanity',
+    sub: 'Sent Apr 18 · auto-expires Apr 25 if no client response. Autopilot has drafted a soft follow-up with a fresh option and is waiting for your nod.',
+    recLabel: '● Send follow-up + price-point alternative',
+    rec: 'Drop the price by 4% on the standard option (still 33% margin) and offer a downgraded hardware path as a cheaper alternative. <b>Modeled close-rate uplift: +24%</b>. Same total margin in dollars, faster cash.',
+    primary: 'Send follow-up',
+    secondary: 'Snooze 1 day',
+    numbers: [['Quote value','$6,742'],['Margin','33%'],['Days open','7'],['Close prob.','62%']],
+    context: 'Patel is in active discovery with two other vendors. She replied positively to the initial quote then went quiet. Last viewed the PDF 2d ago — interest is warm. Comparable jobs in your book closed at 38% margin once we matched on hardware.',
+    trail: [
+      ['green','Quote drafted from inbound RFQ','Apr 18 · 22m'],
+      ['green','Sent via email + SMS','Apr 18 · 24m'],
+      ['blue','3 follow-up touchpoints scheduled','Apr 18 · automation'],
+      ['amber','Draft follow-up · awaiting your approval','now']
+    ],
+    actions: [
+      ['Send follow-up + alternative quote','Drops 4% on standard · 33% margin'],
+      ['Discount the standard option only','Same line items · 30% margin'],
+      ['Hold · let it expire','Re-open as cold lead in 14 days']
+    ],
+    related: [['Pipeline','J. Patel · Cool · 52'],['Customer','Homeowner · Region A'],['Last touch','SMS · Apr 23']]
+  },
+  atlas: {
+    pipColor: 'var(--danger)',
+    kicker: 'QUEUE · AR OVERDUE',
+    title: 'Atlas Build Co. · 40% milestone unpaid',
+    h2: 'M2 milestone invoice · 7 days overdue',
+    sub: 'Invoice INV-2026-038 was due 7 days ago. Autopilot has drafted a polite nudge plus a stronger escalation, and queued a phone call for tomorrow morning if no reply.',
+    recLabel: '● Send nudge today · escalate Fri if silent',
+    rec: 'Atlas has paid on time for the prior 3 milestones — this is almost certainly a process slip on their AP side. The drafted nudge is friendly, references the prior on-time history, and includes the invoice PDF inline. <b>87% of nudges at this stage resolve within 48h.</b>',
+    primary: 'Send nudge now',
+    secondary: 'Call them instead',
+    numbers: [['Invoice','$14,200'],['Days overdue','7'],['Prior on-time','3 of 3'],['AR risk','Low']],
+    context: 'Atlas Build Co. is a 2-year customer with $182k lifetime revenue and a clean payment history. The contact (PM J. Reyes) is on PTO until Friday — that probably explains the delay. Their CFO\'s autopay setting on AP is misconfigured for this invoice category per Xero.',
+    trail: [
+      ['green','Invoice sent to AP@atlas + PM','Apr 16 · scheduled'],
+      ['green','Auto-reminder 3 days pre-due','Apr 20 · sent'],
+      ['red','Due date passed · no response','Apr 23'],
+      ['amber','Nudge drafted · awaiting your approval','3h ago']
+    ],
+    actions: [
+      ['Send nudge · email + SMS','Drafted · waiting on you'],
+      ['Skip nudge · call CFO direct','Phone number queued'],
+      ['Pause AR automation here','Manual follow-up takes over']
+    ],
+    related: [['Customer','Atlas Build Co. · A grade'],['Active','Multi-unit kitchen pkg'],['CFO','M. Reyes (PTO)']]
+  },
+  morgan: {
+    pipColor: 'var(--info)',
+    kicker: 'QUEUE · MEETING PREP',
+    title: 'K. Morgan · material selection 10:00',
+    h2: 'Material selection meeting · tomorrow',
+    sub: 'Autopilot has assembled a tearsheet pack with the 4 finishes K. Morgan flagged as favorites in your prior calls, plus 2 fresh options that match her stated palette. Just confirm.',
+    recLabel: '● Send tearsheet pack tonight',
+    rec: 'Morgan is a fast decider — last time she picked finishes inside 25 minutes when we sent the pack the night before. <b>Recommend: send the 6-option PDF tonight at 19:00.</b> She will arrive tomorrow with a shortlist, saving 40 minutes on-site.',
+    primary: 'Send tearsheet now',
+    secondary: 'Reschedule meeting',
+    numbers: [['Stage','M3 · in production'],['Job value','$24,800'],['Margin','38%'],['Meeting','Tomorrow 10:00']],
+    context: 'K. Morgan is in week 4 of an 8-week build. The white-oak finish she initially wanted is in stock at Delta (per the supplier decision queued above). Photographer is booked May 11 for the tradeshow content shoot.',
+    trail: [
+      ['green','Meeting confirmed via SMS','Apr 21 · auto'],
+      ['green','6-option tearsheet pack drafted','Apr 23 · 1h'],
+      ['blue','Calendar held for PM + designer','Apr 23 · 2h'],
+      ['amber','Awaiting your sign-off to send pack','30m ago']
+    ],
+    actions: [
+      ['Send tearsheet · 6 options','PDF · client app · email'],
+      ['Trim to 4 options before sending','Designer review first'],
+      ['Skip pack · talk through on-site','Adds ~40m to the meeting']
+    ],
+    related: [['Project','K. Morgan build'],['PM','J. Reyes'],['Linked supplier decision','Panel stock shortfall']]
+  },
+  northgate: {
+    pipColor: 'var(--ok)',
+    kicker: 'QUEUE · PAYMENT CONFIRMED',
+    title: 'Northgate · midpoint payment received',
+    h2: 'M2 milestone · $3,000 cleared',
+    sub: 'Stripe confirmed payment 1 day ago. Autopilot has already updated the GL, posted the receipt, and unlocked the M3 build phase. Quick thank-you note drafted — review and send.',
+    recLabel: '● Send thank-you · trigger M3 kickoff',
+    rec: 'Northgate is your #2 lifetime customer with $94k in prior projects. The drafted thank-you references the install-window confirmation and lightly previews next steps. <b>Sending warms the relationship right before the larger M4 invoice.</b>',
+    primary: 'Send thank-you',
+    secondary: 'Skip · keep silent',
+    numbers: [['Payment','$3,000'],['LTV','$94k'],['M3 unlocks','$8,400'],['Customer grade','A']],
+    context: 'Payment cleared Stripe at 11:42 yesterday. Funds posted to your operating account. Reconciliation matched against PO-118 automatically — no journal entry needed. M3 (design signoff) is the next milestone trigger.',
+    trail: [
+      ['green','Stripe payment cleared','Apr 23 · 11:42'],
+      ['green','GL entry posted to Xero','Apr 23 · 11:43'],
+      ['green','M3 milestone unlocked','Apr 23 · 11:43'],
+      ['blue','Thank-you drafted · awaiting approval','12h ago']
+    ],
+    actions: [
+      ['Send thank-you note','Drafted · ready to fire'],
+      ['Skip thank-you · go silent','Cash already booked'],
+      ['Trigger M4 invoice generation','Up next anyway in 11 days']
+    ],
+    related: [['Customer','Northgate · A grade'],['Project','Northgate design pkg'],['Next milestone','M3 · design signoff']]
+  },
+  reilly: {
+    pipColor: 'var(--warn)',
+    kicker: 'QUEUE · INBOUND LEAD',
+    title: 'S. Reilly · new website inquiry',
+    h2: 'Inbound lead · design-build inquiry',
+    sub: 'Web form submission yesterday. Autopilot has scored, enriched, and triaged the lead — and drafted a discovery call invite at three time slots. Just send the invite.',
+    recLabel: '● Send discovery invite · 3 time slots',
+    rec: 'Reilly\'s form mentions a "mid-century kitchen refresh" and a 6-month timeline. She works in a creative field (LinkedIn enriched), and the budget bracket she selected lines up with your typical Design-Build customers. <b>Modeled close prob: 41%.</b> Move fast.',
+    primary: 'Send discovery invite',
+    secondary: 'Hand to designer',
+    numbers: [['Lead score','71/100'],['Bracket','$25-40k'],['Timeline','6 months'],['Source','Web · referral']],
+    context: 'S. Reilly submitted the inquiry at 16:18 yesterday. She mentioned a referral from "Erin at Foundry Build". Her email was matched to a LinkedIn profile — Creative Director at a regional ad agency. Replies fast on email per the enriched data.',
+    trail: [
+      ['green','Lead scored + enriched','Yesterday · auto'],
+      ['green','Auto-reply sent · resources attached','Yesterday · 6m after'],
+      ['green','Designer pod assigned','Yesterday · automation'],
+      ['amber','Discovery invite drafted · awaiting send','22h ago']
+    ],
+    actions: [
+      ['Send 3-slot discovery invite','Mon/Tue/Wed AM available'],
+      ['Hand to designer M. Khan','Skip your involvement'],
+      ['Hold for 7 days · long-cycle','If pipeline already busy']
+    ],
+    related: [['Source','Web form · referral'],['Referral','Erin · Foundry Build'],['Stage','Lead / consult']]
+  }
+};
+
+function openFeedDetail(key){
+  var d = FEED_DETAILS[key];
+  if(!d) return;
+  document.getElementById('fd-title').textContent = d.title;
+  document.getElementById('fd-pip').style.background = d.pipColor;
+  document.getElementById('fd-kicker').textContent = d.kicker;
+  document.getElementById('fd-h2').textContent = d.h2;
+  document.getElementById('fd-sub').textContent = d.sub;
+  document.getElementById('fd-rec-label').innerHTML = d.recLabel;
+  document.getElementById('fd-rec-body').innerHTML = d.rec;
+
+  var primary = document.getElementById('fd-primary');
+  primary.textContent = d.primary + ' →';
+  primary.className = 'btn btn-accent';
+  primary.onclick = function(){
+    primary.classList.remove('btn-accent'); primary.classList.add('is-done');
+    primary.innerHTML = '✓ ' + d.primary;
+    toast(d.primary + ' · autopilot taking it from here','queued');
+  };
+  document.getElementById('fd-secondary').onclick = function(){
+    toast(d.secondary,'queued');
+  };
+
+  document.getElementById('fd-numbers').innerHTML = d.numbers.map(function(n){
+    return '<div class="kv-row"><span class="k">'+n[0]+'</span><span class="v" style="font-family:var(--font-sans);text-transform:none;letter-spacing:0;font-size:13px">'+n[1]+'</span></div>';
+  }).join('');
+
+  document.getElementById('fd-context').textContent = d.context;
+
+  document.getElementById('fd-trail').innerHTML = d.trail.map(function(t){
+    return '<div class="feed-item" style="padding:11px 0;cursor:default"><div class="feed-dot feed-dot-'+t[0]+'"></div><div class="feed-text">'+t[1]+'</div><div class="feed-time">'+t[2]+'</div></div>';
+  }).join('');
+
+  document.getElementById('fd-actions-list').innerHTML = d.actions.map(function(a,i){
+    return '<div class="feed-item" data-action-row="'+i+'" style="padding:13px 0;cursor:pointer"><div style="font-size:13px;flex:1"><div style="font-weight:500">'+a[0]+'</div><div style="font-size:11.5px;color:var(--muted);margin-top:2px">'+a[1]+'</div></div><div style="font-size:11px;color:var(--faint);font-family:var(--font-mono)">→</div></div>';
+  }).join('');
+  document.querySelectorAll('#fd-actions-list .feed-item').forEach(function(row){
+    row.addEventListener('click', function(){
+      var idx = parseInt(row.getAttribute('data-action-row'),10);
+      toast(d.actions[idx][0],'queued');
+    });
+  });
+
+  document.getElementById('fd-related').innerHTML = d.related.map(function(r){
+    return '<div class="kv-row"><span class="k">'+r[0]+'</span><span class="v" style="font-family:var(--font-sans);text-transform:none;letter-spacing:0;font-size:13px">'+r[1]+'</span></div>';
+  }).join('');
+
+  showScreen('feed-detail');
+}
+
+document.querySelectorAll('.feed-item[data-feed]').forEach(function(row){
+  row.addEventListener('click', function(){
+    openFeedDetail(row.getAttribute('data-feed'));
+  });
+});
+
+// Live autopilot feed ticker on Dashboard
+(function(){
+  var firstItem=document.querySelector('#screen-dashboard .card .feed-item');
+  if(!firstItem) return;
+  var feedCard=firstItem.parentElement;
+  var anchor=feedCard.querySelector('.section-label');
+  var ticker=[
+    {color:'green', html:'<b>Atlas Build Co.</b> — $3,400 payment cleared via Stripe'},
+    {color:'blue',  html:'<b>Quote drafted</b> — L. Bergman build · $34,200 · 41% margin'},
+    {color:'amber', html:'<b>Supplier</b> — Penrose lead-time slipped 3d. Quotes flagged.'},
+    {color:'green', html:'<b>Email</b> — autopilot replied to S. Reilly · meeting booked Thu'},
+    {color:'red',   html:'<b>AR alert</b> — Hartline Civil 14d overdue. Nudge queued.'},
+    {color:'blue',  html:'<b>Calendar</b> — site visit auto-rescheduled to Thu 14:00'},
+    {color:'green', html:'<b>Invoice INV-2841</b> coded to 5210 · posted to Xero'},
+    {color:'amber', html:'<b>Lead</b> — inbound from web form · M. Reyes · triaged'}
+  ];
+  var i=0;
+  function tick(){
+    if(!document.getElementById('screen-dashboard').classList.contains('active')) return;
+    if(foot && foot.classList.contains('paused')) return;
+    var item=ticker[i++%ticker.length];
+    var el=document.createElement('div');
+    el.className='feed-item is-new';
+    el.innerHTML='<div class="feed-dot feed-dot-'+item.color+'"></div><div class="feed-text">'+item.html+'</div><div class="feed-time">just now</div>';
+    anchor.insertAdjacentElement('afterend', el);
+    // Trim list to max 7 items in this card
+    var rows=feedCard.querySelectorAll('.feed-item');
+    if(rows.length>7) rows[rows.length-1].remove();
+    // Demote prior "just now" stamps so only newest reads "just now"
+    rows=feedCard.querySelectorAll('.feed-item');
+    Array.prototype.forEach.call(rows,function(r,idx){
+      var time=r.querySelector('.feed-time');
+      if(idx===0||!time) return;
+      var current=time.textContent.trim();
+      if(current==='just now') time.textContent='1m';
+      else if(/^\d+m$/.test(current)) time.textContent=(parseInt(current)+1)+'m';
+    });
+  }
+  setInterval(tick, 4500);
+})();
 </script>
 </body>
 </html>

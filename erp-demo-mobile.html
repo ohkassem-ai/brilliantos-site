@@ -222,12 +222,35 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
 .auto-banner{
   background:var(--ink);color:var(--bg);
   border-radius:14px;padding:14px 16px;margin-bottom:14px;
-  display:flex;align-items:center;gap:12px
+  display:flex;align-items:center;gap:12px;cursor:pointer;transition:opacity .15s
 }
+.auto-banner:active{opacity:.85}
 .auto-banner .pulse{width:8px;height:8px;border-radius:50%;background:oklch(0.7 0.18 60);box-shadow:0 0 0 0 oklch(0.7 0.18 60 / .6);animation:pulse 2s infinite;flex-shrink:0}
 @keyframes pulse{0%{box-shadow:0 0 0 0 oklch(0.7 0.18 60 / .55)}70%{box-shadow:0 0 0 9px oklch(0.7 0.18 60 / 0)}100%{box-shadow:0 0 0 0 oklch(0.7 0.18 60 / 0)}}
 .auto-banner .t1{font-size:10px;color:oklch(0.8 0.06 60);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
 .auto-banner .t2{font-size:13px;margin-top:1px}
+.auto-banner.paused{background:oklch(0.32 0.06 30)}
+.auto-banner.paused .pulse{background:oklch(0.7 0.18 30);animation-duration:1.4s}
+
+/* Tappable queue rows (have "tap →" hint) */
+.qitem.tappable{cursor:pointer;transition:transform .12s,border-color .12s}
+.qitem.tappable:active{transform:scale(.985);border-color:var(--ink-2)}
+
+/* Inline appbar icon button feedback */
+.appbar .icons svg{cursor:pointer;transition:color .15s}
+.appbar .icons svg:active{color:var(--ink)}
+
+/* Section-label "view all" link is now tappable */
+.section-label .rr.tap{cursor:pointer;color:var(--accent)}
+.section-label .rr.tap:active{opacity:.7}
+
+/* Ticker insert animation */
+.qitem.is-new{animation:popin .35s ease}
+@keyframes popin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.qitem.is-new .right{color:var(--ok);font-weight:600}
+
+/* Approve-and-send success */
+.btn.is-done{background:var(--ok)!important;border-color:var(--ok)!important;color:#fff!important;pointer-events:none}
 
 /* SEGMENT */
 .segment{display:flex;background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;padding:3px;margin:0 0 14px}
@@ -340,7 +363,7 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
 
       <div class="section-label"><span class="ll">Today's queue</span><span class="rr">3 need you</span></div>
       <div class="queue">
-        <div class="qitem">
+        <div class="qitem" data-go="s-lead">
           <span class="dot d-amber"></span>
           <div class="body">
             <div class="label">Approve · quote</div>
@@ -350,7 +373,7 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
           </div>
           <div class="right">$41.5k<br/>tap →</div>
         </div>
-        <div class="qitem">
+        <div class="qitem" data-go="s-decide">
           <span class="dot d-red"></span>
           <div class="body">
             <div class="label">Decide · supplier</div>
@@ -360,7 +383,7 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
           </div>
           <div class="right">+$340<br/>tap →</div>
         </div>
-        <div class="qitem">
+        <div class="qitem" data-go="s-hire">
           <span class="dot d-blue"></span>
           <div class="body">
             <div class="label">Confirm · hire</div>
@@ -597,6 +620,168 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
       </div>
       <div class="tiny mono" style="color:var(--faint);text-align:center;margin-top:8px">
         On approval, autopilot will send PDF + e-sign link, create the deal, and schedule follow-ups.
+      </div>
+    </section>
+
+    <!-- SUPPLIER DECISION (Panel stock shortfall) -->
+    <section class="screen" id="s-decide">
+      <div class="detail-head">
+        <button class="back-btn" onclick="goBack('s-home')">‹</button>
+        <div style="flex:1">
+          <div class="screen-sub" style="margin:0">Today's queue / Decide</div>
+          <div style="font-size:18px;font-weight:500;letter-spacing:-.01em">Panel stock shortfall</div>
+        </div>
+        <span class="badge b-red">Decide</span>
+      </div>
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:500">K. Morgan build · Stage 2 (Active)</div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:3px">Material selection · $24,800 · M3 due Apr 28</div>
+        <div class="hr"></div>
+        <div style="font-size:12.5px;color:var(--ink-2);line-height:1.5">
+          Supplier Alpha (your default) back-ordered the white-oak veneer panels for <b>4 days</b>. Pushing the install window risks the kitchen-reno tradeshow deadline. Supplier Delta has stock in your region at <b>+$340</b> over Alpha's locked price.
+        </div>
+      </div>
+
+      <div class="section-label"><span class="ll">Autopilot recommendation</span></div>
+      <div class="card" style="border-color:var(--accent);background:var(--accent-soft)">
+        <div style="font-size:10px;color:var(--accent);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">● Switch to Delta</div>
+        <div style="font-size:13px;color:var(--ink-2);line-height:1.5">
+          Net cost to project: <b>+$340</b>. Net margin impact: <b>−0.8 pts</b> (still 64.2%). Keeps install on schedule, protects the tradeshow date, no client conversation needed.
+        </div>
+      </div>
+
+      <div class="section-label"><span class="ll">Compare</span></div>
+      <div class="card" style="padding:14px 16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Alpha (wait)</div>
+            <div style="font-size:16px;font-weight:600;font-family:var(--font-mono)">$8,420</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4">Ready Apr 25 · ships from Region A · same quality grade · client expects 2-week install</div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">● Delta (in stock)</div>
+            <div style="font-size:16px;font-weight:600;font-family:var(--font-mono);color:var(--accent)">$8,760</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4">Ships tomorrow · Region B · same grade A · 12 prior jobs · 0 quality issues</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label"><span class="ll">Knock-on effects</span></div>
+      <div class="card" style="padding:6px 14px">
+        <div class="qitem" style="border:none;padding:10px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-green"></span>
+          <div class="body"><div class="title small">Install window stays Apr 28 → May 9</div><div class="sub">No client conversation required</div></div>
+        </div>
+        <div class="qitem" style="border:none;padding:10px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-green"></span>
+          <div class="body"><div class="title small">Tradeshow content shoot stays May 11</div><div class="sub">Photographer + stylist already booked</div></div>
+        </div>
+        <div class="qitem" style="border:none;padding:10px 0">
+          <span class="dot d-amber"></span>
+          <div class="body"><div class="title small">Alpha lead-time SLA flagged</div><div class="sub">3rd slip this quarter · review queued for Friday</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn" style="flex:1" onclick="toast('Holding Alpha · install pushed 4d')">Keep Alpha</button>
+        <button class="btn accent" style="flex:2" onclick="approveDecision(this)">Switch to Delta · +$340 →</button>
+      </div>
+      <div class="tiny mono" style="color:var(--faint);text-align:center;margin-top:10px">
+        On confirm, autopilot updates the BOM, re-issues the PO, and notifies K. Morgan's PM.
+      </div>
+    </section>
+
+    <!-- HIRE CONFIRMATION (P. Sandoval) -->
+    <section class="screen" id="s-hire">
+      <div class="detail-head">
+        <button class="back-btn" onclick="goBack('s-home')">‹</button>
+        <div style="flex:1">
+          <div class="screen-sub" style="margin:0">Today's queue / Confirm</div>
+          <div style="font-size:18px;font-weight:500;letter-spacing:-.01em">P. Sandoval · Designer</div>
+        </div>
+        <span class="badge b-contract">Offer</span>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div class="av av-coral">PS</div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:500">Senior product designer</div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Inbound · referred by M. Khan · 7y experience</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Base</div>
+            <div style="font-size:18px;font-weight:600;font-family:var(--font-mono)">$118k</div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Start date</div>
+            <div style="font-size:14px;font-weight:600;font-family:var(--font-mono)">Jun 9</div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Equity</div>
+            <div style="font-size:14px;font-weight:600;font-family:var(--font-mono)">0.18%</div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Scorecard</div>
+            <div style="font-size:18px;font-weight:600;font-family:var(--font-mono);color:var(--ok)">A−</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label"><span class="ll">Autopilot did</span></div>
+      <div class="queue">
+        <div class="qitem">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">Screened 142 inbound applications</div>
+            <div class="sub">Filtered to 8 · scored against role rubric · top 3 invited</div>
+            <div class="meta">9d ago</div>
+          </div>
+        </div>
+        <div class="qitem">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">3 reference checks completed</div>
+            <div class="sub">All positive · 2 specifically called out collaboration + speed</div>
+            <div class="meta">2d ago</div>
+          </div>
+        </div>
+        <div class="qitem">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">Compensation packet generated</div>
+            <div class="sub">Benchmarked at p65 for the role + region · within your hiring band</div>
+            <div class="meta">3h ago</div>
+          </div>
+        </div>
+        <div class="qitem">
+          <span class="dot d-amber"></span>
+          <div class="body">
+            <div class="title small">Offer letter drafted · awaiting your sign-off</div>
+            <div class="sub">Salary, equity, start date, perks all filled · just needs your signature</div>
+            <div class="meta">1h ago</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label"><span class="ll">References · highlights</span></div>
+      <div class="card" style="padding:14px 16px">
+        <div style="font-size:12.5px;font-style:italic;color:var(--ink-2);line-height:1.55">
+          "Patricia ships. Most designers I've worked with want to debate the brief for a week; she debates for an hour and then has something on the screen. Hire her."
+        </div>
+        <div class="tiny mono" style="color:var(--muted);margin-top:8px;letter-spacing:.04em">— M. Khan · Head of Design, Foundry Build</div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn" style="flex:1" onclick="toast('Held · added to follow-up')">Hold</button>
+        <button class="btn accent" style="flex:2" onclick="approveDecision(this)">Send offer →</button>
+      </div>
+      <div class="tiny mono" style="color:var(--faint);text-align:center;margin-top:10px">
+        On send, autopilot e-signs from your side, e-mails the candidate, and kicks off pre-onboarding.
       </div>
     </section>
 
@@ -1160,11 +1345,183 @@ function toast(msg){
   t.textContent = msg;
   t.style.opacity = 1;
   t.style.transform = 'translateX(-50%) translateY(0)';
-  setTimeout(()=>{
+  clearTimeout(t._h);
+  t._h = setTimeout(()=>{
     t.style.opacity = 0;
     t.style.transform = 'translateX(-50%) translateY(20px)';
   }, 2200);
 }
+
+/* ─── Wire every dead-looking interactive surface ───────────── */
+
+// Tappable cards without onclick → toast their first heading
+document.querySelectorAll('.card.tap').forEach(function(c){
+  if(c.getAttribute('onclick')) return;
+  c.addEventListener('click', function(){
+    var heading = c.querySelector('[style*="font-size:15px"], [style*="font-size:14px"], h3, .title');
+    var label = (heading && heading.textContent.trim()) || 'Opening item';
+    toast('Opening · ' + label);
+  });
+});
+
+// Today's queue items navigate to their detail screen (data-go)
+// or, if no target, just toast with the title.
+document.querySelectorAll('#s-home .qitem').forEach(function(q){
+  var right = q.querySelector('.right');
+  if(!right || !/tap/i.test(right.textContent)) return;
+  q.classList.add('tappable');
+  q.addEventListener('click', function(){
+    var dest = q.getAttribute('data-go');
+    if(dest){
+      go(dest, null);
+    } else {
+      var title = q.querySelector('.title');
+      toast('Opening · ' + ((title && title.textContent.trim()) || 'item'));
+    }
+  });
+});
+
+// Generic "approve decision" handler used on supplier/hire detail buttons
+function approveDecision(btn){
+  if(btn.classList.contains('is-done')) return;
+  btn.classList.add('is-done');
+  var label = (btn.textContent||'').replace(/[→\s]+$/,'').trim();
+  btn.innerHTML = '✓ ' + label.replace(/^([A-Za-z]+).*/,'$1ed');
+  toast('Confirmed · autopilot taking it from here');
+}
+
+// Filter chips on Pipeline — toggle active
+document.querySelectorAll('.chips').forEach(function(row){
+  row.querySelectorAll('.chip').forEach(function(ch){
+    ch.addEventListener('click', function(){
+      row.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      ch.classList.add('active');
+      var name = ch.textContent.trim();
+      // Filter pipeline cards by badge text matching (or show all on "All")
+      var cards = document.querySelectorAll('#s-pipe .card.tap');
+      cards.forEach(function(card){
+        if(name === 'All'){ card.style.display=''; return; }
+        var badge = card.querySelector('.badge');
+        var txt = (badge && badge.textContent.trim().toLowerCase()) || '';
+        card.style.display = (txt.indexOf(name.toLowerCase()) >= 0) ? '' : 'none';
+      });
+      toast('Filter · ' + name);
+    });
+  });
+});
+
+// "Edit" button on lead detail (no onclick yet)
+document.querySelectorAll('button.btn, a.btn').forEach(function(b){
+  if(b.getAttribute('onclick')) return;
+  if(b.classList.contains('back-btn')) return;
+  b.addEventListener('click', function(e){
+    e.preventDefault();
+    var label = (b.textContent||'').trim().replace(/^[+✓→\s]+/,'').replace(/\s*[→\s]+$/,'');
+    toast(label || 'Done');
+  });
+});
+
+// Approve & send → visual success state instead of just a toast
+(function(){
+  var b = Array.prototype.find.call(document.querySelectorAll('button.btn.primary'), function(x){
+    return /approve.*send/i.test(x.textContent||'');
+  });
+  if(!b) return;
+  // Strip existing inline onclick toast — replace with full flow
+  b.removeAttribute('onclick');
+  b.addEventListener('click', function(){
+    if(b.classList.contains('is-done')) return;
+    b.classList.add('is-done');
+    b.innerHTML = '✓ Sent to client';
+    toast('Quote sent · PDF + SMS');
+    setTimeout(function(){ toast('Follow-up armed for +7 days'); }, 950);
+  });
+})();
+
+// Appbar icons (search + bell) → toast feedback
+document.querySelectorAll('.appbar .icons svg').forEach(function(svg, i){
+  svg.addEventListener('click', function(){
+    toast(i === 0 ? 'Search · 142 records indexed' : 'Notifications · 3 new');
+  });
+});
+
+// "view all" / right-side meta in section labels → toast feedback
+document.querySelectorAll('.section-label .rr').forEach(function(rr){
+  if(!/view|all|need|see/i.test(rr.textContent)) return;
+  rr.classList.add('tap');
+  rr.addEventListener('click', function(){
+    toast(rr.textContent.trim() + ' · expanded');
+  });
+});
+
+// Autopilot banner → toggle paused/active
+var apBanner = document.querySelector('#s-home .auto-banner');
+if(apBanner){
+  var t1 = apBanner.querySelector('.t1');
+  var t2 = apBanner.querySelector('.t2');
+  var orig = { t1: t1.textContent, t2: t2.textContent };
+  apBanner.addEventListener('click', function(){
+    var paused = apBanner.classList.toggle('paused');
+    if(paused){
+      t1.textContent = 'Autopilot · paused';
+      t2.textContent = 'Tap to resume · no actions taken';
+      toast('Autopilot paused');
+    } else {
+      t1.textContent = orig.t1;
+      t2.textContent = orig.t2;
+      toast('Autopilot resumed · 21 rules running');
+    }
+  });
+}
+
+// Live activity ticker on Home (the "Autopilot · last 4h" card)
+(function(){
+  // Find the section-label whose ll is "Autopilot · last 4h", then the next .card
+  var label = Array.prototype.find.call(document.querySelectorAll('#s-home .section-label'), function(l){
+    var ll = l.querySelector('.ll');
+    return ll && /autopilot/i.test(ll.textContent);
+  });
+  if(!label) return;
+  var card = label.nextElementSibling;
+  if(!card) return;
+  var ticker = [
+    {color:'green', title:'Atlas Build Co. · $3.4k payment cleared', sub:'Auto-applied to milestone M2 · Stripe'},
+    {color:'blue',  title:'Quote drafted · L. Bergman build', sub:'$34.2k · 41% margin · awaiting your tap'},
+    {color:'amber', title:'Supplier lead-time slipped · Penrose', sub:'3 active quotes flagged for review'},
+    {color:'green', title:'Email sent · S. Reilly', sub:'Meeting confirmed Thu 2pm · calendar held'},
+    {color:'red',   title:'AR alert · Hartline Civil 14d overdue', sub:'Nudge queued · escalation in 48h'},
+    {color:'accent',title:'Invoice INV-2841 coded → Xero', sub:'Account 5210 · matched PO-118'}
+  ];
+  var i = 0;
+  function tick(){
+    if(!document.getElementById('s-home').classList.contains('active')) return;
+    if(apBanner && apBanner.classList.contains('paused')) return;
+    var item = ticker[i++ % ticker.length];
+    var div = document.createElement('div');
+    div.className = 'qitem is-new';
+    div.style.cssText = 'border:none;padding:11px 0;border-bottom:1px solid var(--rule)';
+    div.innerHTML =
+      '<span class="dot d-'+item.color+'"></span>'+
+      '<div class="body">'+
+        '<div class="title small">'+item.title+'</div>'+
+        '<div class="sub">'+item.sub+'</div>'+
+      '</div>'+
+      '<div class="right">just now</div>';
+    card.insertBefore(div, card.firstChild);
+    // Cap to 5 rows
+    var rows = card.querySelectorAll('.qitem');
+    if(rows.length > 5) rows[rows.length-1].remove();
+    // Demote older "just now" stamps
+    Array.prototype.forEach.call(card.querySelectorAll('.qitem'), function(r, idx){
+      var right = r.querySelector('.right');
+      if(!right || idx === 0) return;
+      var cur = right.textContent.trim();
+      if(cur === 'just now') right.textContent = '1m';
+      else if(/^\d+m$/.test(cur)) right.textContent = (parseInt(cur)+1)+'m';
+    });
+  }
+  setInterval(tick, 5000);
+})();
 </script>
 </body>
 </html>

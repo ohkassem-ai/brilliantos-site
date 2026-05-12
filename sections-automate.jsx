@@ -140,21 +140,23 @@ function AutomateGrid() {
           ))}
         </div>
 
-        <div style={{
-          marginTop: 40,
+        <div className="uc-detail" style={{
+          marginTop: 48,
+          paddingTop: 36,
+          borderTop: '0.5px solid var(--rule)',
           display: 'grid',
-          gridTemplateColumns: '1.4fr 1fr',
-          gap: 60,
-          alignItems: 'start'
+          gridTemplateColumns: '1fr 1.5fr',
+          gap: 48,
+          alignItems: 'center'
         }}>
           <div>
             <div className="mono tiny muted" style={{ letterSpacing: '.1em' }}>{c.n} · DETAIL</div>
-            <h3 className="display" style={{ fontSize: 44, margin: '14px 0 18px' }}>{c.name}</h3>
-            <p style={{ fontSize: 18, lineHeight: 1.5, color: 'var(--ink-2)', maxWidth: '52ch' }}>{c.body}</p>
-            <div style={{ marginTop: 24, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <h3 className="display" style={{ fontSize: 36, margin: '10px 0 8px', letterSpacing: '-0.02em' }}>{c.name}</h3>
+            <div className="muted small" style={{ marginBottom: 18 }}>{c.sub}.</div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 18 }}>
               {c.tags.map(t => <span key={t} className="chip"><span className="dot"></span>{t}</span>)}
             </div>
-            <a href="use-cases.html" className="small" style={{ marginTop: 28, display: 'inline-block', color: 'var(--accent)' }}>
+            <a href="use-cases.html" className="small" style={{ color: 'var(--accent)' }}>
               See full workflow →
             </a>
           </div>
@@ -179,28 +181,18 @@ function UseCaseDiagram({ id }) {
   };
   const steps = flows[id] || flows.erp;
   return (
-    <div className="card" style={{ padding: 24, background: 'var(--bg-2)' }}>
-      <div className="mono tiny muted" style={{ letterSpacing: '.1em', marginBottom: 18 }}>FLOW</div>
-      <div style={{ display: 'grid', gap: 12 }}>
-        {steps.map((s, i) => (
-          <div key={i} style={{
-            display: 'grid',
-            gridTemplateColumns: '24px 1fr auto',
-            alignItems: 'center',
-            gap: 14,
-            padding: '14px 16px',
-            background: 'var(--bg)',
-            border: '0.5px solid var(--rule)',
-            borderRadius: 10
-          }}>
-            <span className="mono tiny muted">{String(i+1).padStart(2,'0')}</span>
-            <span style={{ fontSize: 15 }}>{s}</span>
-            <span className="mono tiny" style={{ color: i === steps.length-1 ? 'var(--accent)' : 'var(--faint)' }}>
-              {i === steps.length-1 ? '● done' : '○ auto'}
+    <div className="uc-flow">
+      {steps.map((s, i) => (
+        <React.Fragment key={i}>
+          <div className="uc-flow-step" data-final={i === steps.length - 1 ? 'true' : 'false'}>
+            <span className="mono tiny" style={{ color: i === steps.length - 1 ? 'var(--accent)' : 'var(--faint)' }}>
+              {String(i+1).padStart(2,'0')}
             </span>
+            <span>{s}</span>
           </div>
-        ))}
-      </div>
+          {i < steps.length - 1 && <span className="uc-flow-arrow" aria-hidden="true">→</span>}
+        </React.Fragment>
+      ))}
     </div>
   );
 }
@@ -256,9 +248,9 @@ function HowItWorks() {
           </Reveal>
         </div>
 
-        {/* Journey track */}
+        {/* Journey track (desktop only — hidden on mobile via .how-journey) */}
         <Reveal delay={200}>
-          <div style={{
+          <div className="how-journey" style={{
             position: 'relative',
             padding: '40px 0 0',
             marginBottom: 24
@@ -305,7 +297,7 @@ function HowItWorks() {
         </Reveal>
 
         {/* Phase cards — original wording */}
-        <div style={{
+        <div className="how-phases" style={{
           display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0,
         }}>
           {phases.map((p, i) => (
@@ -315,6 +307,10 @@ function HowItWorks() {
                 borderRight: i < 2 ? '0.5px solid var(--rule)' : 'none',
                 position: 'relative'
               }}>
+              <div className="phase-meta">
+                <span className="phase-numeral" data-partner={p.partner ? 'true' : 'false'}>{p.n}</span>
+                <span className="mono tiny" style={{ color: 'var(--muted)', letterSpacing: '.1em', textTransform: 'uppercase' }}>{p.span}</span>
+              </div>
               <h3 className="display" style={{
                 fontSize: 36, margin: '0 0 14px',
                 letterSpacing: '-0.02em'
