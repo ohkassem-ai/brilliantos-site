@@ -14,8 +14,13 @@ function ROICalculator() {
   const marginGain = rev * 1_000_000 * 0.04;  // 4 pts realised margin
   const speedGain = rev * 1_000_000 * 0.08;   // 8% pipeline conversion improvement
   const total = opsRecovered + marginGain + speedGain;
-  const fee = Math.max(60000, Math.min(180000, total * 0.18));
-  const net = total - fee;
+  // Fee scales with revenue: ~$10k floor for $200k-revenue businesses,
+  // climbing linearly until the $180k cap kicks in around $6M revenue.
+  // Designed so total always exceeds fee — payback + return never go negative.
+  const fee = Math.max(10000, Math.min(180000, rev * 30000));
+  const net = Math.max(0, total - fee);
+  const paybackMonths = Math.max(1, Math.min(12, Math.round((fee / total) * 12)));
+  const returnMultiple = Math.max(1, total / fee);
 
   return (
     <section className="section" id="roi" style={{ background: 'var(--bg-2)' }}>
@@ -116,13 +121,13 @@ function ROICalculator() {
                     <div>
                       <div className="mono tiny muted">PAYBACK</div>
                       <div className="display" style={{ fontSize: 24, marginTop: 2 }}>
-                        ~{Math.max(1, Math.round((fee / total) * 12))} months
+                        ~{paybackMonths} month{paybackMonths === 1 ? '' : 's'}
                       </div>
                     </div>
                     <div>
                       <div className="mono tiny muted">RETURN ON FEE</div>
                       <div className="display" style={{ fontSize: 24, marginTop: 2 }}>
-                        {(total / fee).toFixed(1)}x
+                        {returnMultiple.toFixed(1)}x
                       </div>
                     </div>
                   </div>
@@ -294,7 +299,7 @@ function CaseStudies() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
             <span className="chip"><span className="dot"></span>Founding cohort open</span>
-            <span className="small muted">3 of 5 seats remaining · cohort pricing locked for life · closes Q3 2026</span>
+            <span className="small muted">2 seats remaining · cohort pricing locked for life · closes Q3 2026</span>
           </div>
           <a href="book.html?cohort=1" className="btn primary">Apply to the cohort <span className="arrow">→</span></a>
         </div>
@@ -389,7 +394,7 @@ function Pricing() {
               background: 'oklch(0.85 0.13 65)'
             }}></div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-              <span className="mono tiny" style={{ letterSpacing: '.14em', color: 'oklch(0.85 0.13 65)' }}>● FOUNDING COHORT · 2 OF 5 SEATS LEFT</span>
+              <span className="mono tiny" style={{ letterSpacing: '.14em', color: 'oklch(0.85 0.13 65)' }}>● FOUNDING COHORT · 2 SEATS LEFT</span>
               <span style={{ fontSize: 14, color: 'oklch(0.85 0.012 75)' }}>
                 Cohort pricing shown on each tier. Locked at these rates for life.
               </span>
