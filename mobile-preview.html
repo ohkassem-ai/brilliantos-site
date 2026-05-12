@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mobile preview — BrilliantOS</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:oklch(0.18 0.02 260);font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;color:oklch(0.94 0.008 250);padding:32px 16px;min-height:100vh}
+  h1{font-family:Georgia,serif;font-style:italic;font-weight:500;font-size:28px;letter-spacing:-.01em;margin:0 0 6px;text-align:center}
+  .sub{font-size:13px;color:oklch(0.65 0.012 260);text-align:center;margin-bottom:6px;font-family:ui-monospace,monospace;letter-spacing:.04em}
+  .switcher{display:flex;gap:6px;justify-content:center;margin:18px 0 28px;flex-wrap:wrap}
+  .switcher button{appearance:none;border:1px solid oklch(0.34 0.018 260);background:oklch(0.22 0.02 260);color:oklch(0.88 0.008 250);font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.04em;padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .15s}
+  .switcher button:hover{border-color:oklch(0.60 0.012 260)}
+  .switcher button.active{background:oklch(0.85 0.13 65);color:oklch(0.18 0.02 260);border-color:oklch(0.85 0.13 65);font-weight:600}
+  .stage{display:flex;justify-content:center;align-items:flex-start;padding:0 8px}
+  .phone{
+    position:relative;
+    width:393px;height:852px;
+    background:#0a0a0a;border-radius:54px;padding:14px;
+    box-shadow:0 0 0 2px oklch(0.40 0.012 260) inset, 0 50px 80px -30px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05);
+  }
+  .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:120px;height:32px;background:#000;border-radius:0 0 18px 18px;z-index:5}
+  .screen{width:100%;height:100%;border-radius:42px;overflow:hidden;background:#fff;position:relative}
+  iframe{width:100%;height:100%;border:none;display:block}
+  .hint{text-align:center;margin-top:18px;font-size:12px;color:oklch(0.60 0.012 260);font-family:ui-monospace,monospace}
+  .hint a{color:oklch(0.85 0.13 65)}
+</style>
+</head>
+<body>
+  <h1>Mobile preview</h1>
+  <div class="sub">393 × 852 · iPhone 15 / 16 · live and interactive</div>
+
+  <div class="switcher">
+    <button class="active" data-src="index.html">Landing</button>
+    <button data-src="use-cases.html">Use cases</button>
+    <button data-src="pricing.html">Pricing</button>
+    <button data-src="book.html">Book a call</button>
+  </div>
+
+  <div class="stage">
+    <div class="phone">
+      <div class="notch"></div>
+      <div class="screen"><iframe id="preview" src="index.html"></iframe></div>
+    </div>
+  </div>
+
+  <div class="hint">
+    Scroll the phone screen. <a href="index.html">Exit preview →</a>
+  </div>
+
+<script>
+  const ifr = document.getElementById('preview');
+  document.querySelectorAll('.switcher button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.switcher button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      ifr.src = b.dataset.src;
+    });
+  });
+</script>
+</body>
+</html>

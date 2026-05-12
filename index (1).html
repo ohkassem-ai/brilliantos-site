@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BrilliantOS — Autopilot for your business</title>
+  <meta name="description" content="BrilliantOS is bespoke AI autopilot for small and mid-sized businesses. ERP, CRM, quotes, finance, project ops and HR — run by one operating layer, built around your business." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta property="og:title" content="BrilliantOS — Autopilot for your business" />
+  <meta property="og:description" content="Custom-built AI systems for SMBs. Replace SaaS sprawl with one shared brain. Fixed fees, refunded if we miss." />
+  <meta property="og:type" content="website" />
+
+  <script>
+  try {
+    const t = JSON.parse(localStorage.getItem('brilliantos-tweaks') || 'null');
+    if (t) {
+      if (t.palette) document.documentElement.setAttribute('data-palette', t.palette);
+      if (t.display) document.documentElement.setAttribute('data-display', t.display);
+      document.documentElement.setAttribute('data-theme', t.dark ? 'dark' : 'light');
+      document.addEventListener('DOMContentLoaded', () => {
+        if (t.density) document.body.setAttribute('data-density', t.density);
+      });
+    }
+  } catch(e){}
+  </script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel" src="sections-hero.jsx"></script>
+  <script type="text/babel" src="sections-automate.jsx"></script>
+  <script type="text/babel" src="sections-compare.jsx"></script>
+  <script type="text/babel" src="sections-roi.jsx"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "palette": "ink",
+      "display": "sans",
+      "density": "regular",
+      "dark": false
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+      useEffect(() => {
+        document.documentElement.setAttribute('data-palette', t.palette);
+        document.documentElement.setAttribute('data-display', t.display);
+        document.documentElement.setAttribute('data-theme', t.dark ? 'dark' : 'light');
+        document.body.setAttribute('data-density', t.density);
+        try { localStorage.setItem('brilliantos-tweaks', JSON.stringify(t)); } catch(e){}
+      }, [t.palette, t.display, t.density, t.dark]);
+
+      return (
+        <>
+          <Nav current="home" />
+          <main>
+            <Hero />
+            <AutomateGrid />
+            <HowItWorks />
+            <BeforeAfter />
+            <LivePreview />
+            <ROICalculator />
+            <CaseStudies />
+            <Pricing />
+            <FinalCTA />
+          </main>
+          <Footer />
+
+          <TweaksPanel>
+            <TweakSection label="Palette" />
+            <TweakRadio label="Accent"
+              value={t.palette}
+              options={['ochre','forest','ink']}
+              onChange={(v) => setTweak('palette', v)} />
+            <TweakToggle label="Dark mode"
+              value={t.dark}
+              onChange={(v) => setTweak('dark', v)} />
+
+            <TweakSection label="Typography" />
+            <TweakRadio label="Display"
+              value={t.display}
+              options={['serif','sans']}
+              onChange={(v) => setTweak('display', v)} />
+
+            <TweakSection label="Layout" />
+            <TweakRadio label="Density"
+              value={t.density}
+              options={['compact','regular','comfy']}
+              onChange={(v) => setTweak('density', v)} />
+          </TweaksPanel>
+        </>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

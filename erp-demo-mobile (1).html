@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>BrilliantOS — mobile demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-sans:'Geist','Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --bg:oklch(0.985 0.003 80);
+  --bg-2:oklch(0.965 0.004 80);
+  --bg-3:oklch(0.94 0.005 80);
+  --ink:oklch(0.20 0.012 80);
+  --ink-2:oklch(0.32 0.012 80);
+  --muted:oklch(0.50 0.010 80);
+  --faint:oklch(0.66 0.010 80);
+  --rule:oklch(0.91 0.006 80);
+  --rule-2:oklch(0.85 0.008 80);
+  --accent:oklch(0.55 0.13 55);
+  --accent-2:oklch(0.48 0.12 50);
+  --accent-soft:oklch(0.95 0.04 60);
+  --ok:oklch(0.55 0.13 145);
+  --ok-soft:oklch(0.95 0.04 145);
+  --warn:oklch(0.70 0.13 70);
+  --warn-soft:oklch(0.96 0.04 70);
+  --info:oklch(0.55 0.12 245);
+  --info-soft:oklch(0.95 0.03 245);
+  --danger:oklch(0.55 0.18 25);
+  --danger-soft:oklch(0.96 0.04 25);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;background:var(--bg);max-width:480px;margin:0 auto;position:relative}
+
+/* APP BAR */
+.appbar{
+  position:sticky;top:0;z-index:10;
+  background:var(--bg);
+  border-bottom:1px solid var(--rule);
+  padding:14px 18px 12px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.appbar .brand{display:flex;align-items:center;gap:9px}
+.appbar .mark{width:22px;height:22px;border-radius:6px;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:12px;font-weight:700}
+.appbar .title{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.appbar .sub{font-size:10.5px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.04em;margin-top:1px}
+.appbar .icons{display:flex;align-items:center;gap:14px;color:var(--muted)}
+.appbar svg{width:18px;height:18px}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 0 96px;-webkit-overflow-scrolling:touch}
+.screen{display:none;padding:0 18px}
+.screen.active{display:block}
+.screen-title{font-size:24px;font-weight:500;letter-spacing:-.015em;margin:6px 0 2px}
+.screen-sub{font-size:12.5px;color:var(--muted);margin-bottom:18px;font-family:var(--font-mono);letter-spacing:.02em}
+
+/* SECTIONS */
+.section-label{font-size:10.5px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;margin:22px 0 10px;display:flex;justify-content:space-between;align-items:center}
+.section-label .ll{display:flex;align-items:center;gap:8px}
+.section-label .rr{color:var(--faint)}
+
+/* CARDS */
+.card{background:var(--bg);border:1px solid var(--rule);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.card.tap{cursor:pointer;transition:transform .12s,border-color .12s}
+.card.tap:active{transform:scale(.985);border-color:var(--ink-2)}
+
+/* KPI TILES */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.kpi{background:var(--bg);border:1px solid var(--rule);border-radius:14px;padding:14px 14px}
+.kpi-label{font-size:10.5px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.kpi-val{font-size:22px;font-weight:500;letter-spacing:-.015em;line-height:1}
+.kpi-sub{font-size:10.5px;color:var(--faint);margin-top:5px;font-family:var(--font-mono)}
+.kpi-delta{font-size:10.5px;color:var(--ok);margin-top:5px;font-family:var(--font-mono);display:inline-flex;align-items:center;gap:3px}
+.kpi-delta.down{color:var(--danger)}
+
+/* QUEUE / FEED ITEMS */
+.queue{display:flex;flex-direction:column;gap:8px}
+.qitem{
+  background:var(--bg);border:1px solid var(--rule);border-radius:12px;
+  padding:12px 14px;display:flex;align-items:flex-start;gap:11px;
+}
+.qitem .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.qitem .body{flex:1;min-width:0}
+.qitem .label{font-size:9.5px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.qitem .title{font-size:13.5px;font-weight:500;color:var(--ink);line-height:1.35}
+.qitem .sub{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.qitem .meta{font-size:10.5px;color:var(--faint);font-family:var(--font-mono);margin-top:5px}
+.qitem .right{font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-left:6px;text-align:right;flex-shrink:0;line-height:1.4}
+
+.d-blue{background:var(--info)}.d-green{background:var(--ok)}
+.d-amber{background:var(--warn)}.d-red{background:var(--danger)}
+.d-accent{background:var(--accent)}.d-faint{background:var(--faint)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:500;font-family:var(--font-mono);letter-spacing:.04em;text-transform:uppercase}
+.b-active{background:var(--ok-soft);color:var(--ok)}
+.b-quote{background:var(--warn-soft);color:var(--warn)}
+.b-contract{background:var(--info-soft);color:var(--info)}
+.b-build{background:var(--accent-soft);color:var(--accent)}
+.b-red{background:var(--danger-soft);color:var(--danger)}
+.b-faint{background:var(--bg-2);color:var(--muted)}
+.b-paid{background:var(--ok-soft);color:var(--ok)}
+.b-due{background:var(--warn-soft);color:var(--warn)}
+.b-overdue{background:var(--danger-soft);color:var(--danger)}
+
+/* PROGRESS */
+.bar{height:6px;background:var(--bg-2);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar > div{height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.bar.ok > div{background:var(--ok)}
+.bar.info > div{background:var(--info)}
+.bar.warn > div{background:var(--warn)}
+
+/* AVATAR */
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;font-family:var(--font-mono);letter-spacing:.02em}
+.av-blue{background:var(--info-soft);color:var(--info)}
+.av-teal{background:var(--ok-soft);color:var(--ok)}
+.av-coral{background:var(--danger-soft);color:var(--danger)}
+.av-amber{background:var(--warn-soft);color:var(--warn)}
+.av-ink{background:oklch(0.30 0.012 80);color:var(--bg)}
+
+/* MONO */
+.mono{font-family:var(--font-mono)}
+.tiny{font-size:10.5px}
+.small{font-size:12px}
+
+/* AUTOPILOT TAG */
+.auto-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--accent);background:var(--accent-soft);
+  padding:3px 7px;border-radius:4px
+}
+
+/* DETAIL HEADER (back nav) */
+.detail-head{display:flex;align-items:center;gap:10px;padding:4px 0 10px;margin-bottom:6px}
+.back-btn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--rule);background:var(--bg);
+  display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer;
+  font-size:18px;line-height:1
+}
+.back-btn:active{background:var(--bg-2)}
+
+/* MILESTONE */
+.milestone{margin-top:18px}
+.milestone h4{font-size:11px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px;display:flex;justify-content:space-between}
+.milestone h4 .st{color:var(--muted)}
+.milestone h4 .st.done{color:var(--ok)}
+.milestone h4 .st.now{color:var(--accent)}
+
+.task{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.task:last-child{border-bottom:none}
+.task .ck{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--rule-2);flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.task .ck.done{background:var(--ink);border-color:var(--ink)}
+.task .ck.done::after{content:'';display:block;width:8px;height:5px;border-left:1.5px solid var(--bg);border-bottom:1.5px solid var(--bg);transform:rotate(-45deg) translate(0,-1px)}
+.task .ck.now{border-color:var(--accent);background:var(--accent-soft)}
+.task .nm{flex:1;font-size:13px;color:var(--ink)}
+.task .nm.done{text-decoration:line-through;color:var(--muted)}
+.task .nm.now{color:var(--accent);font-weight:500}
+.task .mt{font-size:10.5px;color:var(--faint);font-family:var(--font-mono);flex-shrink:0;margin-left:6px}
+
+/* TRIGGER PILL */
+.trigger{
+  border-left:3px solid var(--rule-2);background:var(--bg-2);
+  padding:9px 12px;border-radius:0 8px 8px 0;margin-top:8px;
+  display:flex;align-items:center;gap:8px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)
+}
+.trigger.armed{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.trigger.paid{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.trigger .arrow{font-size:13px}
+
+/* BOTTOM TAB BAR */
+.tabbar{
+  position:absolute;left:0;right:0;bottom:0;z-index:20;
+  background:rgba(254,253,250,.92);
+  backdrop-filter:saturate(120%) blur(8px);
+  -webkit-backdrop-filter:saturate(120%) blur(8px);
+  border-top:1px solid var(--rule);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding:8px 6px 12px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom));
+}
+.tab{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  border:none;background:transparent;color:var(--muted);
+  font-family:var(--font-sans);font-size:9.5px;font-weight:500;letter-spacing:.02em;
+  padding:6px 4px;cursor:pointer;
+  transition:color .12s
+}
+.tab svg{width:22px;height:22px;stroke-width:1.6}
+.tab.active{color:var(--ink)}
+.tab.active svg{color:var(--accent)}
+.tab:active{transform:scale(.94)}
+
+/* MORE SHEET */
+.sheet-back{
+  position:absolute;inset:0;background:rgba(20,18,15,.32);
+  z-index:30;opacity:0;pointer-events:none;transition:opacity .2s
+}
+.sheet-back.open{opacity:1;pointer-events:auto}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:31;
+  background:var(--bg);border-radius:20px 20px 0 0;
+  padding:14px 0 calc(18px + env(safe-area-inset-bottom));
+  transform:translateY(100%);transition:transform .26s cubic-bezier(.2,.8,.3,1);
+  box-shadow:0 -20px 60px -20px rgba(0,0,0,.22)
+}
+.sheet.open{transform:translateY(0)}
+.sheet .handle{width:40px;height:4px;background:var(--rule-2);border-radius:2px;margin:0 auto 14px}
+.sheet h3{font-size:11px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase;padding:0 22px 8px}
+.sheet-row{display:flex;align-items:center;gap:14px;padding:14px 22px;border-top:1px solid var(--rule);cursor:pointer}
+.sheet-row:active{background:var(--bg-2)}
+.sheet-row svg{width:20px;height:20px;color:var(--muted);flex-shrink:0}
+.sheet-row .lbl{flex:1;font-size:14px}
+.sheet-row .ch{font-size:18px;color:var(--faint)}
+
+/* AUTOPILOT BANNER */
+.auto-banner{
+  background:var(--ink);color:var(--bg);
+  border-radius:14px;padding:14px 16px;margin-bottom:14px;
+  display:flex;align-items:center;gap:12px
+}
+.auto-banner .pulse{width:8px;height:8px;border-radius:50%;background:oklch(0.7 0.18 60);box-shadow:0 0 0 0 oklch(0.7 0.18 60 / .6);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%{box-shadow:0 0 0 0 oklch(0.7 0.18 60 / .55)}70%{box-shadow:0 0 0 9px oklch(0.7 0.18 60 / 0)}100%{box-shadow:0 0 0 0 oklch(0.7 0.18 60 / 0)}}
+.auto-banner .t1{font-size:10px;color:oklch(0.8 0.06 60);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+.auto-banner .t2{font-size:13px;margin-top:1px}
+
+/* SEGMENT */
+.segment{display:flex;background:var(--bg-2);border:1px solid var(--rule);border-radius:10px;padding:3px;margin:0 0 14px}
+.segment button{
+  flex:1;border:none;background:transparent;color:var(--muted);
+  padding:7px 8px;font-size:12px;font-family:var(--font-sans);font-weight:500;
+  border-radius:7px;cursor:pointer
+}
+.segment button.active{background:var(--bg);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+/* PL ROW */
+.pl-row{display:grid;grid-template-columns:1fr 80px 50px;gap:8px;padding:7px 0;font-size:12.5px;align-items:baseline}
+.pl-row .v{font-family:var(--font-mono);text-align:right;font-weight:500}
+.pl-row .d{font-family:var(--font-mono);text-align:right;font-size:10.5px;color:var(--muted)}
+.pl-row.head{border-top:1px solid var(--rule);padding-top:10px;margin-top:6px;font-weight:600}
+.pl-row.total{border-top:1.5px solid var(--ink);padding-top:10px;margin-top:6px;font-weight:700}
+.pl-row.section-head{font-size:10.5px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase;padding-top:14px;font-weight:600}
+
+/* QUOTE SUMMARY */
+.q-line{display:flex;justify-content:space-between;padding:7px 0;font-size:12.5px;border-bottom:1px solid var(--rule)}
+.q-line:last-child{border-bottom:none}
+.q-line .v{font-family:var(--font-mono);font-weight:500}
+.q-line.total{font-weight:700;border-top:1px solid var(--ink);border-bottom:none;padding-top:10px;margin-top:4px;font-size:14px}
+
+/* CTA BUTTON */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 16px;border-radius:10px;
+  font-size:13px;font-weight:500;font-family:var(--font-sans);
+  cursor:pointer;border:1px solid var(--rule);background:var(--bg);color:var(--ink);
+  min-height:44px;text-decoration:none
+}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.block{width:100%}
+
+/* HORIZONTAL CHIP SCROLLER */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;margin-bottom:6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:7px 12px;border-radius:999px;border:1px solid var(--rule);font-size:12px;color:var(--muted);background:var(--bg);white-space:nowrap;cursor:pointer}
+.chip.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* PIPE COL HEADERS */
+.list-head{display:flex;align-items:center;justify-content:space-between;padding:2px 4px 8px;font-size:10px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+
+/* COMM ITEM */
+.comm{display:flex;gap:11px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.comm:last-child{border-bottom:none}
+.comm .ic{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;font-weight:500}
+.comm .ic.e{background:var(--info-soft);color:var(--info)}
+.comm .ic.s{background:var(--ok-soft);color:var(--ok)}
+.comm .ic.c{background:var(--accent-soft);color:var(--accent)}
+.comm .bd{flex:1;min-width:0}
+.comm .sb{font-size:13px;font-weight:500}
+.comm .pv{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.comm .tm{font-size:10px;color:var(--faint);font-family:var(--font-mono);margin-top:5px}
+
+/* SUPPLIER ROW */
+.supp{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule)}
+.supp:last-child{border-bottom:none}
+.supp .ic-sq{width:36px;height:36px;border-radius:8px;background:var(--bg-2);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--ink-2);flex-shrink:0}
+.supp .nm{flex:1;min-width:0}
+.supp .nm .ti{font-size:13px;font-weight:500}
+.supp .nm .sb{font-size:11px;color:var(--muted);margin-top:1px}
+.supp .rt{text-align:right;font-size:11.5px}
+.supp .rt .v{font-weight:600;font-family:var(--font-mono)}
+.supp .rt .s{color:var(--muted);font-size:10.5px;font-family:var(--font-mono);margin-top:1px}
+
+.hr{height:1px;background:var(--rule);margin:14px 0}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- APP BAR -->
+  <header class="appbar">
+    <div class="brand">
+      <div class="mark">B</div>
+      <div>
+        <div class="title">BrilliantOS</div>
+        <div class="sub">acme studio</div>
+      </div>
+    </div>
+    <div class="icons">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="content" id="content">
+
+    <!-- HOME -->
+    <section class="screen active" id="s-home">
+      <div class="auto-banner">
+        <div class="pulse"></div>
+        <div>
+          <div class="t1">Autopilot · 21 rules active</div>
+          <div class="t2">14 actions taken since you slept</div>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-label">Pipeline</div><div class="kpi-val">$184k</div><div class="kpi-delta">▲ 12% wk</div></div>
+        <div class="kpi"><div class="kpi-label">Open quotes</div><div class="kpi-val">9</div><div class="kpi-sub">3 awaiting client</div></div>
+        <div class="kpi"><div class="kpi-label">In production</div><div class="kpi-val">7</div><div class="kpi-sub">3 risk · 1 blocked</div></div>
+        <div class="kpi"><div class="kpi-label">Hrs reclaimed</div><div class="kpi-val">22<span class="tiny mono" style="color:var(--muted)">/wk</span></div><div class="kpi-delta">▲ 8 hrs MoM</div></div>
+      </div>
+
+      <div class="section-label"><span class="ll">Today's queue</span><span class="rr">3 need you</span></div>
+      <div class="queue">
+        <div class="qitem">
+          <span class="dot d-amber"></span>
+          <div class="body">
+            <div class="label">Approve · quote</div>
+            <div class="title">D. Whitfield — full kitchen build</div>
+            <div class="sub">Autopilot drafted $41.5k quote. 64% margin · ready to send.</div>
+            <div class="meta">2m ago</div>
+          </div>
+          <div class="right">$41.5k<br/>tap →</div>
+        </div>
+        <div class="qitem">
+          <span class="dot d-red"></span>
+          <div class="body">
+            <div class="label">Decide · supplier</div>
+            <div class="title">Panel stock shortfall · K. Morgan build</div>
+            <div class="sub">Supplier Alpha back-ordered 4 days. Supplier Delta in stock, +$340.</div>
+            <div class="meta">18m ago</div>
+          </div>
+          <div class="right">+$340<br/>tap →</div>
+        </div>
+        <div class="qitem">
+          <span class="dot d-blue"></span>
+          <div class="body">
+            <div class="label">Confirm · hire</div>
+            <div class="title">P. Sandoval — Designer offer</div>
+            <div class="sub">Reference check passed. Compensation packet generated.</div>
+            <div class="meta">1h ago</div>
+          </div>
+          <div class="right">tap →</div>
+        </div>
+      </div>
+
+      <div class="section-label"><span class="ll">Autopilot · last 4h</span><span class="rr">view all</span></div>
+      <div class="card" style="padding:4px 14px">
+        <div class="qitem" style="border:none;padding:11px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">Invoice INV-2026-043 sent · H. Murray</div>
+            <div class="sub">Milestone M3 closed → $9.6k invoice generated and emailed</div>
+          </div>
+          <div class="right">9m</div>
+        </div>
+        <div class="qitem" style="border:none;padding:11px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-blue"></span>
+          <div class="body">
+            <div class="title small">Lead replied · Northgate</div>
+            <div class="sub">Confirmed install window. Calendar invite sent to PM.</div>
+          </div>
+          <div class="right">28m</div>
+        </div>
+        <div class="qitem" style="border:none;padding:11px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-accent"></span>
+          <div class="body">
+            <div class="title small">Supplier price update applied</div>
+            <div class="sub">Supplier Beta panel +6%. 4 active quotes re-priced overnight.</div>
+          </div>
+          <div class="right">3h</div>
+        </div>
+        <div class="qitem" style="border:none;padding:11px 0">
+          <span class="dot d-faint"></span>
+          <div class="body">
+            <div class="title small">Payroll prepped · pay period closes Fri</div>
+            <div class="sub">9 people · $26.4k · awaiting your sign-off</div>
+          </div>
+          <div class="right">4h</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PIPELINE -->
+    <section class="screen" id="s-pipe">
+      <h1 class="screen-title">Pipeline</h1>
+      <div class="screen-sub">$184k weighted · 14 deals</div>
+
+      <div class="chips">
+        <div class="chip active">All</div>
+        <div class="chip">Inbound</div>
+        <div class="chip">Quoted</div>
+        <div class="chip">Negotiating</div>
+        <div class="chip">Won</div>
+      </div>
+
+      <div class="card tap" onclick="openLead('whit')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-size:10px;color:var(--accent);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Hot · 94</div>
+            <div style="font-size:15px;font-weight:500">D. Whitfield</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">Full kitchen build · referral from H. Murray</div>
+          </div>
+          <span class="badge b-quote">Quoted</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)">
+          <span>$41,500</span><span>Next: walkthrough Mon</span>
+        </div>
+        <div class="bar"><div style="width:65%"></div></div>
+      </div>
+
+      <div class="card tap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-size:10px;color:var(--accent);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Warm · 78</div>
+            <div style="font-size:15px;font-weight:500">Northgate Design Co.</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">Office cabinetry · 3 units · ongoing relationship</div>
+          </div>
+          <span class="badge b-contract">Negotiating</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)">
+          <span>$7,500</span><span>Next: contract Thu</span>
+        </div>
+        <div class="bar info"><div style="width:80%"></div></div>
+      </div>
+
+      <div class="card tap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-size:10px;color:var(--info);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">New · 71</div>
+            <div style="font-size:15px;font-weight:500">Atlas Build Group</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">Multi-unit kitchen package · 8 units</div>
+          </div>
+          <span class="badge b-faint">Inbound</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)">
+          <span>~$18,400</span><span>Auto-replied 6m ago</span>
+        </div>
+        <div class="bar"><div style="width:25%"></div></div>
+      </div>
+
+      <div class="card tap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Cool · 52</div>
+            <div style="font-size:15px;font-weight:500">J. Patel</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">Single bath vanity · price-shopping</div>
+          </div>
+          <span class="badge b-faint">Inbound</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)">
+          <span>~$6,700</span><span>Auto-replied 1d</span>
+        </div>
+        <div class="bar"><div style="width:18%"></div></div>
+      </div>
+
+      <div class="section-label"><span class="ll">Won · last 30 days</span><span class="rr">4 deals · $58.3k</span></div>
+      <div class="card" style="padding:4px 14px">
+        <div class="qitem" style="border:none;padding:11px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">K. Morgan — full build</div>
+            <div class="sub mono tiny">$24,800 · 4 milestones · M3 75%</div>
+          </div>
+          <div class="right">apr 14</div>
+        </div>
+        <div class="qitem" style="border:none;padding:11px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">H. Murray — delivery</div>
+            <div class="sub mono tiny">$19,200 · M3 closed · paid</div>
+          </div>
+          <div class="right">apr 2</div>
+        </div>
+        <div class="qitem" style="border:none;padding:11px 0">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">L. Chen — service callback</div>
+            <div class="sub mono tiny">$1,640 · paid</div>
+          </div>
+          <div class="right">apr 22</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEAD DETAIL (Whitfield) -->
+    <section class="screen" id="s-lead">
+      <div class="detail-head">
+        <button class="back-btn" onclick="goBack('s-pipe')">‹</button>
+        <div style="flex:1">
+          <div class="screen-sub" style="margin:0">Pipeline / Hot lead</div>
+          <div style="font-size:18px;font-weight:500;letter-spacing:-.01em">D. Whitfield</div>
+        </div>
+        <span class="badge b-quote">Quoted</span>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div class="av av-blue">DW</div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:500">Full kitchen build</div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Referral from H. Murray · 4 rooms · 2026 install</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Quote value</div>
+            <div style="font-size:18px;font-weight:600;font-family:var(--font-mono)">$41,500</div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Margin</div>
+            <div style="font-size:18px;font-weight:600;font-family:var(--font-mono);color:var(--ok)">64%</div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Score</div>
+            <div style="font-size:18px;font-weight:600;font-family:var(--font-mono)">94<span class="tiny" style="color:var(--muted)">/100</span></div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Close prob.</div>
+            <div style="font-size:18px;font-weight:600;font-family:var(--font-mono);color:var(--accent)">72%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label"><span class="ll">Autopilot did</span></div>
+      <div class="queue">
+        <div class="qitem">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">Parsed RFQ from email + PDF</div>
+            <div class="sub">Extracted scope, room dimensions, finish preferences</div>
+            <div class="meta">14h ago</div>
+          </div>
+        </div>
+        <div class="qitem">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">Priced against live supplier feeds</div>
+            <div class="sub">Cross-checked 4 suppliers · selected Alpha + Delta blend</div>
+            <div class="meta">14h ago</div>
+          </div>
+        </div>
+        <div class="qitem">
+          <span class="dot d-amber"></span>
+          <div class="body">
+            <div class="title small">Drafted quote PDF · awaiting your approval</div>
+            <div class="sub">3 options drafted: standard, premium, premium + finish upgrade</div>
+            <div class="meta">2m ago</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label"><span class="ll">Quote · option 2 (recommended)</span></div>
+      <div class="card">
+        <div class="q-line"><span>Carcase &amp; doors</span><span class="v">$18,200</span></div>
+        <div class="q-line"><span>Hardware (soft-close, premium)</span><span class="v">$4,180</span></div>
+        <div class="q-line"><span>Premium veneer finish</span><span class="v">$6,340</span></div>
+        <div class="q-line"><span>Install &amp; finishing</span><span class="v">$8,900</span></div>
+        <div class="q-line"><span>Delivery &amp; site protect</span><span class="v">$1,200</span></div>
+        <div class="q-line"><span>Subtotal</span><span class="v">$38,820</span></div>
+        <div class="q-line"><span>Tax (estimated)</span><span class="v">$2,680</span></div>
+        <div class="q-line total"><span>Total</span><span class="v">$41,500</span></div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:14px;margin-bottom:6px">
+        <button class="btn" style="flex:1">Edit</button>
+        <button class="btn primary" style="flex:2" onclick="toast('Quote sent · client notified')">Approve &amp; send →</button>
+      </div>
+      <div class="tiny mono" style="color:var(--faint);text-align:center;margin-top:8px">
+        On approval, autopilot will send PDF + e-sign link, create the deal, and schedule follow-ups.
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="screen" id="s-proj">
+      <h1 class="screen-title">Projects</h1>
+      <div class="screen-sub">7 active · 3 on track · 3 risk · 1 blocked</div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-label">On-time</div><div class="kpi-val">91%</div><div class="kpi-sub">target 90%</div></div>
+        <div class="kpi"><div class="kpi-label">Cycle time</div><div class="kpi-val">42<span class="tiny mono" style="color:var(--muted)">d</span></div><div class="kpi-delta down">▼ 6d</div></div>
+      </div>
+
+      <div class="card tap" onclick="openProj()">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-size:15px;font-weight:500">K. Morgan build</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">PM · J. Reyes · $24,800</div>
+          </div>
+          <span class="badge b-active">On track</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)">
+          <span>M3 Build · 75%</span><span>tap for tasks →</span>
+        </div>
+        <div class="bar"><div style="width:62%"></div></div>
+      </div>
+
+      <div class="card tap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-size:15px;font-weight:500">D. Whitfield build</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">PM · S. Lee · $41,500</div>
+          </div>
+          <span class="badge b-active">On track</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)">
+          <span>M2 Materials · 80%</span><span>install May 21</span>
+        </div>
+        <div class="bar ok"><div style="width:80%"></div></div>
+      </div>
+
+      <div class="card tap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-size:15px;font-weight:500">Northgate design pkg</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">PM · M. Khan · $7,500</div>
+          </div>
+          <span class="badge b-quote">At risk</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)">
+          <span>M2 · 50%</span><span style="color:var(--warn)">designer over capacity</span>
+        </div>
+        <div class="bar warn"><div style="width:50%"></div></div>
+      </div>
+
+      <div class="card tap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-size:15px;font-weight:500">H. Murray delivery</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">PM · J. Reyes · $19,200</div>
+          </div>
+          <span class="badge b-active">On track</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)">
+          <span>M4 Install · 93%</span><span>delivery May 2</span>
+        </div>
+        <div class="bar info"><div style="width:93%"></div></div>
+      </div>
+
+      <div class="card tap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-size:15px;font-weight:500">Atlas Build prep</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">PM · unassigned · $18,400</div>
+          </div>
+          <span class="badge b-red">Blocked</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:11.5px;font-family:var(--font-mono);color:var(--muted)">
+          <span>Awaiting signed contract</span><span style="color:var(--danger)">5d overdue</span>
+        </div>
+        <div class="bar"><div style="width:10%;background:var(--danger)"></div></div>
+      </div>
+    </section>
+
+    <!-- PROJECT DETAIL (K. Morgan) -->
+    <section class="screen" id="s-pdetail">
+      <div class="detail-head">
+        <button class="back-btn" onclick="goBack('s-proj')">‹</button>
+        <div style="flex:1">
+          <div class="screen-sub" style="margin:0">Projects</div>
+          <div style="font-size:18px;font-weight:500;letter-spacing:-.01em">K. Morgan build</div>
+        </div>
+        <span class="badge b-active">On track</span>
+      </div>
+
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Contract</div>
+            <div style="font-size:17px;font-weight:600;font-family:var(--font-mono)">$24,800</div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Invoiced</div>
+            <div style="font-size:17px;font-weight:600;font-family:var(--font-mono);color:var(--ok)">$17,360<span class="tiny" style="color:var(--muted)"> · 70%</span></div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">PM</div>
+            <div style="font-size:13px;font-weight:500">J. Reyes</div>
+          </div>
+          <div>
+            <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Install</div>
+            <div style="font-size:13px;font-weight:500">May 21</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="auto-tag">⇶ Auto-invoice on milestone close</div>
+        <div class="tiny mono" style="color:var(--muted);margin-top:8px;line-height:1.5">
+          M1 30% · M2 40% · M3 20% · M4 10% — sent automatically when every task in a milestone closes.
+        </div>
+      </div>
+
+      <div class="milestone">
+        <h4><span>M1 · Design sign-off</span><span class="st done">closed apr 14</span></h4>
+        <div class="card" style="padding:6px 14px">
+          <div class="task"><div class="ck done"></div><div class="nm done">Site measure complete</div><div class="mt">M. Khan</div></div>
+          <div class="task"><div class="ck done"></div><div class="nm done">Drawings v2 approved</div><div class="mt">apr 11</div></div>
+          <div class="task"><div class="ck done"></div><div class="nm done">Contract counter-signed</div><div class="mt">apr 14</div></div>
+        </div>
+        <div class="trigger paid"><span class="arrow">⇶</span> Auto-invoice INV-039 · $7,440 · paid apr 16</div>
+      </div>
+
+      <div class="milestone">
+        <h4><span>M2 · Materials ordered</span><span class="st done">closed apr 24</span></h4>
+        <div class="card" style="padding:6px 14px">
+          <div class="task"><div class="ck done"></div><div class="nm done">Supplier Alpha PO sent</div><div class="mt">auto</div></div>
+          <div class="task"><div class="ck done"></div><div class="nm done">Hardware confirmed</div><div class="mt">apr 20</div></div>
+          <div class="task"><div class="ck done"></div><div class="nm done">Materials received &amp; inspected</div><div class="mt">apr 24</div></div>
+        </div>
+        <div class="trigger paid"><span class="arrow">⇶</span> Auto-invoice INV-041 · $9,920 · paid apr 28</div>
+      </div>
+
+      <div class="milestone">
+        <h4><span>M3 · Build complete</span><span class="st now">in progress</span></h4>
+        <div class="card" style="padding:6px 14px">
+          <div class="task"><div class="ck done"></div><div class="nm done">Carcase assembled</div><div class="mt">may 2</div></div>
+          <div class="task"><div class="ck done"></div><div class="nm done">Doors &amp; drawer fronts</div><div class="mt">may 7</div></div>
+          <div class="task"><div class="ck now"></div><div class="nm now">Hardware &amp; finishing</div><div class="mt">due may 14</div></div>
+          <div class="task"><div class="ck"></div><div class="nm">QC photos to client</div><div class="mt">auto</div></div>
+        </div>
+        <div class="trigger armed"><span class="arrow">⇶</span> Will auto-invoice INV-044 · $4,960 on close</div>
+      </div>
+
+      <div class="milestone">
+        <h4><span>M4 · Delivery &amp; install</span><span class="st">queued</span></h4>
+        <div class="card" style="padding:6px 14px">
+          <div class="task"><div class="ck"></div><div class="nm">Schedule install with client</div><div class="mt">may 16</div></div>
+          <div class="task"><div class="ck"></div><div class="nm">On-site install &amp; punch list</div><div class="mt">may 21</div></div>
+          <div class="task"><div class="ck"></div><div class="nm">Client sign-off</div><div class="mt">may 22</div></div>
+        </div>
+        <div class="trigger"><span class="arrow">⇶</span> Final invoice INV-045 · $2,480 · armed on sign-off</div>
+      </div>
+    </section>
+
+    <!-- MONEY -->
+    <section class="screen" id="s-money">
+      <h1 class="screen-title">Money</h1>
+      <div class="screen-sub">april 2026 · auto-reconciled nightly</div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-label">Revenue MTD</div><div class="kpi-val">$84.3k</div><div class="kpi-delta">▲ 18% MoM</div></div>
+        <div class="kpi"><div class="kpi-label">Outstanding AR</div><div class="kpi-val">$57.4k</div><div class="kpi-sub">3 overdue</div></div>
+        <div class="kpi"><div class="kpi-label">Expenses</div><div class="kpi-val">$31.8k</div><div class="kpi-sub">62% materials</div></div>
+        <div class="kpi"><div class="kpi-label">Cash on hand</div><div class="kpi-val">$108k</div><div class="kpi-delta">▲ 4.2 mo</div></div>
+      </div>
+
+      <div class="segment">
+        <button class="active" onclick="moneyTab(event,'pl')">P&amp;L</button>
+        <button onclick="moneyTab(event,'inv')">Invoices</button>
+        <button onclick="moneyTab(event,'auto')">Auto-rules</button>
+      </div>
+
+      <!-- P&L PANE -->
+      <div id="pane-pl">
+        <div class="card">
+          <div class="tiny mono" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Profit &amp; Loss · april 2026</div>
+          <div class="pl-row section-head"><span>Revenue</span><span></span><span></span></div>
+          <div class="pl-row"><span>Build contracts</span><span class="v">$64,200</span><span class="d" style="color:var(--ok)">▲21%</span></div>
+          <div class="pl-row"><span>Design packages</span><span class="v">$14,500</span><span class="d" style="color:var(--ok)">▲29%</span></div>
+          <div class="pl-row"><span>Service &amp; callbacks</span><span class="v">$5,600</span><span class="d" style="color:var(--danger)">▼24%</span></div>
+          <div class="pl-row head"><span>Total revenue</span><span class="v">$84,300</span><span class="d" style="color:var(--ok)">▲18%</span></div>
+
+          <div class="pl-row section-head" style="color:var(--danger)"><span>COGS</span><span></span><span></span></div>
+          <div class="pl-row"><span>Materials</span><span class="v">$19,720</span><span class="d">▲20%</span></div>
+          <div class="pl-row"><span>Direct labour</span><span class="v">$8,890</span><span class="d">▲16%</span></div>
+          <div class="pl-row head"><span>Gross profit</span><span class="v">$55,690</span><span class="d" style="color:var(--ok)">▲18%</span></div>
+          <div class="tiny mono" style="text-align:right;color:var(--muted);padding-top:2px">margin <span style="color:var(--ink-2);font-weight:600">66.1%</span></div>
+
+          <div class="pl-row section-head"><span>Operating</span><span></span><span></span></div>
+          <div class="pl-row"><span>Salaries &amp; overhead</span><span class="v">$2,840</span><span class="d">—</span></div>
+          <div class="pl-row"><span>Software &amp; tools</span><span class="v">$352</span><span class="d">▲24%</span></div>
+          <div class="pl-row total" style="color:var(--ok)"><span>Net income</span><span class="v">$52,498</span><span class="d">▲19%</span></div>
+        </div>
+
+        <div class="section-label"><span class="ll">Financial statements</span></div>
+        <div class="card" style="padding:4px 14px">
+          <div class="sheet-row" style="border-top:none;padding:12px 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6"/></svg><span class="lbl small">Balance Sheet</span><span class="ch">›</span></div>
+          <div class="sheet-row" style="padding:12px 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6"/></svg><span class="lbl small">Cash Flow Statement</span><span class="ch">›</span></div>
+          <div class="sheet-row" style="padding:12px 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6"/></svg><span class="lbl small">A/R Aging</span><span class="ch">›</span></div>
+          <div class="sheet-row" style="padding:12px 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6"/></svg><span class="lbl small">Job Costing Report</span><span class="ch">›</span></div>
+          <div class="sheet-row" style="padding:12px 0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6"/></svg><span class="lbl small">Tax Summary · YTD</span><span class="ch">›</span></div>
+        </div>
+      </div>
+
+      <!-- INVOICES PANE -->
+      <div id="pane-inv" style="display:none">
+        <div class="card tap">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div>
+              <div style="font-size:14px;font-weight:500">INV-2026-042</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px">D. Whitfield · 40% milestone</div>
+            </div>
+            <span class="badge b-overdue">Overdue 7d</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11.5px;font-family:var(--font-mono)"><span style="color:var(--muted)">issued may 4</span><span style="font-weight:600">$16,600</span></div>
+        </div>
+
+        <div class="card tap">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div>
+              <div style="font-size:14px;font-weight:500">INV-2026-041</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px">Northgate · 30% final</div>
+            </div>
+            <span class="badge b-due">Due 3d</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11.5px;font-family:var(--font-mono)"><span style="color:var(--muted)">issued may 1</span><span style="font-weight:600">$2,250</span></div>
+        </div>
+
+        <div class="card tap">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div>
+              <div style="font-size:14px;font-weight:500">INV-2026-040</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px">H. Murray · 50% midpoint</div>
+            </div>
+            <span class="badge b-paid">Paid</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11.5px;font-family:var(--font-mono)"><span style="color:var(--muted)">paid apr 29</span><span style="font-weight:600">$9,600</span></div>
+        </div>
+
+        <div class="card tap">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+            <div>
+              <div style="font-size:14px;font-weight:500">INV-2026-039</div>
+              <div style="font-size:11.5px;color:var(--muted);margin-top:2px">K. Morgan · 30% deposit</div>
+            </div>
+            <span class="badge b-paid">Paid</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11.5px;font-family:var(--font-mono)"><span style="color:var(--muted)">paid apr 16</span><span style="font-weight:600">$7,440</span></div>
+        </div>
+      </div>
+
+      <!-- AUTO-RULES PANE -->
+      <div id="pane-auto" style="display:none">
+        <div class="kpis" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="kpi"><div class="kpi-label">Triggered</div><div class="kpi-val">14</div><div class="kpi-sub">last 30d</div></div>
+          <div class="kpi"><div class="kpi-label">Send time</div><div class="kpi-val">4<span class="tiny mono" style="color:var(--muted)">m</span></div><div class="kpi-sub">prev. 2.4d</div></div>
+          <div class="kpi"><div class="kpi-label">Days to pay</div><div class="kpi-val" style="color:var(--ok)">9.2</div><div class="kpi-sub">prev. 21d</div></div>
+        </div>
+
+        <div class="section-label"><span class="ll">Active rules</span></div>
+        <div class="card" style="padding:4px 14px">
+          <div class="qitem" style="border:none;padding:13px 0;border-bottom:1px solid var(--rule)">
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500">Milestone close → invoice</div>
+              <div class="tiny mono" style="color:var(--muted);margin-top:3px">all builds · 30 / 40 / 20 / 10</div>
+            </div>
+            <span class="badge b-active">Active</span>
+          </div>
+          <div class="qitem" style="border:none;padding:13px 0;border-bottom:1px solid var(--rule)">
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500">Quote accept → deposit invoice</div>
+              <div class="tiny mono" style="color:var(--muted);margin-top:3px">30% deposit · sent within 5min</div>
+            </div>
+            <span class="badge b-active">Active</span>
+          </div>
+          <div class="qitem" style="border:none;padding:13px 0;border-bottom:1px solid var(--rule)">
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500">Time entry → service invoice</div>
+              <div class="tiny mono" style="color:var(--muted);margin-top:3px">T&amp;M jobs billed weekly</div>
+            </div>
+            <span class="badge b-active">Active</span>
+          </div>
+          <div class="qitem" style="border:none;padding:13px 0">
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500">Overdue → escalation</div>
+              <div class="tiny mono" style="color:var(--muted);margin-top:3px">+5d · +12d · +21d PM handoff</div>
+            </div>
+            <span class="badge b-active">Active</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PEOPLE -->
+    <section class="screen" id="s-people">
+      <h1 class="screen-title">People</h1>
+      <div class="screen-sub">9 headcount · 82% utilization</div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-label">Headcount</div><div class="kpi-val">9</div><div class="kpi-sub">6 FT · 2 PT · 1 contractor</div></div>
+        <div class="kpi"><div class="kpi-label">Utilization</div><div class="kpi-val">82%</div><div class="kpi-delta">▲ 6pt</div></div>
+        <div class="kpi"><div class="kpi-label">Open roles</div><div class="kpi-val">2</div><div class="kpi-sub">designer · apprentice</div></div>
+        <div class="kpi"><div class="kpi-label">PTO this wk</div><div class="kpi-val">14<span class="tiny mono" style="color:var(--muted)">h</span></div><div class="kpi-sub">2 PTO · 1 sick</div></div>
+      </div>
+
+      <div class="section-label"><span class="ll">Team</span></div>
+      <div class="card" style="padding:4px 14px">
+        <div class="supp" style="padding:12px 0">
+          <div class="av av-blue">JR</div>
+          <div class="nm"><div class="ti">J. Reyes</div><div class="sb">PM lead</div></div>
+          <div class="rt"><div class="v">36h</div><div class="s">3 projects</div></div>
+        </div>
+        <div class="supp" style="padding:12px 0">
+          <div class="av av-coral">MK</div>
+          <div class="nm"><div class="ti">M. Khan</div><div class="sb">Senior designer</div></div>
+          <div class="rt"><div class="v" style="color:var(--warn)">42h</div><div class="s">over capacity</div></div>
+        </div>
+        <div class="supp" style="padding:12px 0">
+          <div class="av av-teal">SL</div>
+          <div class="nm"><div class="ti">S. Lee</div><div class="sb">PM</div></div>
+          <div class="rt"><div class="v">28h</div><div class="s">2 projects</div></div>
+        </div>
+        <div class="supp" style="padding:12px 0">
+          <div class="av av-amber">RA</div>
+          <div class="nm"><div class="ti">R. Adler</div><div class="sb">Build lead · contractor</div></div>
+          <div class="rt"><div class="v">22h</div><div class="s">1 project</div></div>
+        </div>
+        <div class="supp" style="padding:12px 0">
+          <div class="av av-blue">TW</div>
+          <div class="nm"><div class="ti">T. Watanabe</div><div class="sb">Apprentice</div></div>
+          <div class="rt"><div class="v">32h</div><div class="s">in training</div></div>
+        </div>
+      </div>
+
+      <div class="section-label"><span class="ll">Hiring pipeline</span><span class="rr">auto-screened</span></div>
+      <div class="card" style="padding:4px 14px">
+        <div class="qitem" style="border:none;padding:11px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-blue"></span>
+          <div class="body">
+            <div class="title small">P. Sandoval · Designer</div>
+            <div class="sub mono tiny">interview thu · stage 3</div>
+          </div>
+        </div>
+        <div class="qitem" style="border:none;padding:11px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-amber"></span>
+          <div class="body">
+            <div class="title small">N. Okafor · Designer</div>
+            <div class="sub mono tiny">take-home review · stage 2</div>
+          </div>
+        </div>
+        <div class="qitem" style="border:none;padding:11px 0;border-bottom:1px solid var(--rule)">
+          <span class="dot d-green"></span>
+          <div class="body">
+            <div class="title small">D. Lin · Apprentice</div>
+            <div class="sub mono tiny">reference passed · stage 4</div>
+          </div>
+        </div>
+        <div class="qitem" style="border:none;padding:11px 0">
+          <span class="dot d-faint"></span>
+          <div class="body">
+            <div class="title small">14 applicants · Designer role</div>
+            <div class="sub mono tiny">AI-ranked · top 5 surfaced</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUPPLIERS -->
+    <section class="screen" id="s-supp">
+      <h1 class="screen-title">Suppliers</h1>
+      <div class="screen-sub">5 active · price feeds synced 3m ago</div>
+
+      <div class="auto-banner" style="background:var(--accent-soft);color:var(--accent)">
+        <div class="pulse" style="background:var(--accent);box-shadow:none;animation:none"></div>
+        <div>
+          <div class="t1" style="color:var(--accent)">Autopilot · live re-pricing</div>
+          <div class="t2" style="color:var(--ink)">4 active quotes re-priced overnight as Supplier Beta panel went up 6%</div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:4px 14px">
+        <div class="supp" style="padding:12px 0">
+          <div class="ic-sq">α</div>
+          <div class="nm"><div class="ti">Supplier Alpha</div><div class="sb">Panel · primary · 4d lead</div></div>
+          <div class="rt"><div class="v" style="color:var(--ok)">$3.42</div><div class="s">/sqft · -2%</div></div>
+        </div>
+        <div class="supp" style="padding:12px 0">
+          <div class="ic-sq">β</div>
+          <div class="nm"><div class="ti">Supplier Beta</div><div class="sb">Panel · backup · 2d lead</div></div>
+          <div class="rt"><div class="v" style="color:var(--danger)">$3.78</div><div class="s">/sqft · +6%</div></div>
+        </div>
+        <div class="supp" style="padding:12px 0">
+          <div class="ic-sq">γ</div>
+          <div class="nm"><div class="ti">Supplier Gamma</div><div class="sb">Hardware · soft-close</div></div>
+          <div class="rt"><div class="v">$14.20</div><div class="s">/unit · flat</div></div>
+        </div>
+        <div class="supp" style="padding:12px 0">
+          <div class="ic-sq">δ</div>
+          <div class="nm"><div class="ti">Supplier Delta</div><div class="sb">Premium veneer · special</div></div>
+          <div class="rt"><div class="v" style="color:var(--ok)">$24.60</div><div class="s">/sqft · -1%</div></div>
+        </div>
+        <div class="supp" style="padding:12px 0">
+          <div class="ic-sq">ε</div>
+          <div class="nm"><div class="ti">Supplier Epsilon</div><div class="sb">Finish &amp; coatings</div></div>
+          <div class="rt"><div class="v">$48.00</div><div class="s">/gal · flat</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMMS -->
+    <section class="screen" id="s-comms">
+      <h1 class="screen-title">Communications</h1>
+      <div class="screen-sub">42 messages today · 38 handled by autopilot</div>
+
+      <div class="card" style="padding:4px 14px">
+        <div class="comm">
+          <div class="ic e">✉</div>
+          <div class="bd">
+            <div class="sb">D. Whitfield <span class="tiny mono" style="color:var(--muted);font-weight:400">· new RFQ</span></div>
+            <div class="pv">Hi — would love a quote on a full kitchen build. Attaching the floor plan plus a few inspo shots…</div>
+            <div class="tm">draft reply ready · 2m</div>
+          </div>
+        </div>
+        <div class="comm">
+          <div class="ic s">SMS</div>
+          <div class="bd">
+            <div class="sb">K. Morgan <span class="tiny mono" style="color:var(--muted);font-weight:400">· status check</span></div>
+            <div class="pv">Quick one — any update on the hardware? Just want to confirm we're still on for the install date.</div>
+            <div class="tm">autopilot replied · 14m</div>
+          </div>
+        </div>
+        <div class="comm">
+          <div class="ic c">↳</div>
+          <div class="bd">
+            <div class="sb">Supplier Beta <span class="tiny mono" style="color:var(--muted);font-weight:400">· price update</span></div>
+            <div class="pv">Effective May 12, panel pricing will increase 6% across all grades. Active quotes honoured for 7 days.</div>
+            <div class="tm">parsed · re-priced 4 quotes · 3h</div>
+          </div>
+        </div>
+        <div class="comm">
+          <div class="ic e">✉</div>
+          <div class="bd">
+            <div class="sb">Northgate <span class="tiny mono" style="color:var(--muted);font-weight:400">· install window</span></div>
+            <div class="pv">Confirming we can take delivery either week of May 19 or May 26. Either works.</div>
+            <div class="tm">autopilot acknowledged · 28m</div>
+          </div>
+        </div>
+        <div class="comm">
+          <div class="ic e">✉</div>
+          <div class="bd">
+            <div class="sb">H. Murray <span class="tiny mono" style="color:var(--muted);font-weight:400">· thank you</span></div>
+            <div class="pv">Just wanted to say everything looks beautiful. Will definitely refer you to friends.</div>
+            <div class="tm">flagged for testimonial · 1h</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM TAB BAR -->
+  <nav class="tabbar">
+    <button class="tab active" data-tab="s-home" onclick="go('s-home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="tab" data-tab="s-pipe" onclick="go('s-pipe',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18M6 12h12M9 18h6"/></svg>
+      <span>Pipeline</span>
+    </button>
+    <button class="tab" data-tab="s-proj" onclick="go('s-proj',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h7"/></svg>
+      <span>Projects</span>
+    </button>
+    <button class="tab" data-tab="s-money" onclick="go('s-money',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M9 9.5c0-1.4 1.3-2.5 3-2.5s3 1.1 3 2.5-1.3 2-3 2.5-3 1.1-3 2.5 1.3 2.5 3 2.5 3-1.1 3-2.5M12 5v14"/></svg>
+      <span>Money</span>
+    </button>
+    <button class="tab" onclick="openSheet()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+      <span>More</span>
+    </button>
+  </nav>
+
+  <!-- MORE SHEET -->
+  <div class="sheet-back" id="sheet-back" onclick="closeSheet()"></div>
+  <div class="sheet" id="sheet">
+    <div class="handle"></div>
+    <h3>More</h3>
+    <div class="sheet-row" onclick="go('s-people',null);closeSheet()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9" r="3"/><path d="M2 20c.5-3.5 3.5-6 7-6s6.5 2.5 7 6M14 20c.4-2.5 2.5-4.5 5-4.5s4 1.5 4.5 3.5"/></svg>
+      <span class="lbl">People</span><span class="ch">›</span>
+    </div>
+    <div class="sheet-row" onclick="go('s-supp',null);closeSheet()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 11h18M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>
+      <span class="lbl">Suppliers</span><span class="ch">›</span>
+    </div>
+    <div class="sheet-row" onclick="go('s-comms',null);closeSheet()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12a8 8 0 11-3.5-6.6L21 4l-1 4-4 .5"/><path d="M9 11h6M9 14h4"/></svg>
+      <span class="lbl">Communications</span><span class="ch">›</span>
+    </div>
+    <div class="sheet-row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg>
+      <span class="lbl">Settings</span><span class="ch">›</span>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" style="position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:999px;font-size:12.5px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:40;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.18)"></div>
+
+</div>
+
+<script>
+const tabsToScreen = ['s-home','s-pipe','s-proj','s-money'];
+
+function go(id, btnEl){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  // sync tab bar highlight
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(btnEl && btnEl.dataset && btnEl.dataset.tab){
+    btnEl.classList.add('active');
+  } else {
+    // try to find a tab whose data-tab matches id
+    const m = document.querySelector('.tab[data-tab="'+id+'"]');
+    if(m) m.classList.add('active');
+  }
+  // scroll content to top
+  document.getElementById('content').scrollTop = 0;
+}
+function goBack(id){ go(id, null); }
+function openLead(){ go('s-lead', null); }
+function openProj(){ go('s-pdetail', null); }
+function openSheet(){
+  document.getElementById('sheet').classList.add('open');
+  document.getElementById('sheet-back').classList.add('open');
+}
+function closeSheet(){
+  document.getElementById('sheet').classList.remove('open');
+  document.getElementById('sheet-back').classList.remove('open');
+}
+function moneyTab(ev, key){
+  ev.currentTarget.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  ev.currentTarget.classList.add('active');
+  ['pl','inv','auto'].forEach(k=>{
+    document.getElementById('pane-'+k).style.display = (k===key)?'block':'none';
+  });
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = 1;
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(()=>{
+    t.style.opacity = 0;
+    t.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2200);
+}
+</script>
+</body>
+</html>
