@@ -205,40 +205,39 @@ function UseCaseDiagram({ id }) {
   );
 }
 
-/* How it works */
+/* How it works — horizontal journey with original wording */
 function HowItWorks() {
   const phases = [
     {
       n: 'I',
       title: 'Map',
       span: '1–2 weeks',
-      body: 'We sit with you and your team for a week. Map every workflow, every tool, every “wait, that’s a person doing that?” moment.',
-      bullets: ['Workflow audit', 'Tool inventory', 'Bottleneck graph']
+      body: 'We sit with you and your team for a week. Map every workflow, every tool, every "wait, that\'s a person doing that?" moment.',
+      bullets: ['Workflow audit', 'Tool inventory', 'Bottleneck graph'],
     },
     {
       n: 'II',
       title: 'Build',
       span: '3–6 weeks',
       body: 'We build the operating layer — agents, integrations, dashboards — bespoke to your business. You stay in your day job.',
-      bullets: ['Agents + tools', 'Integrations', 'Approval surface']
+      bullets: ['Agents + tools', 'Integrations', 'Approval surface'],
     },
     {
       n: 'III',
       title: 'Operate',
       span: 'Ongoing',
       body: 'We run it with you. Monthly tuning, quarterly expansion, an on-call engineer when reality changes. Not a hand-off, a partnership.',
-      bullets: ['SLA + on-call', 'Monthly tuning', 'Quarterly expansion']
+      bullets: ['SLA + on-call', 'Monthly tuning', 'Quarterly expansion'],
+      partner: true
     },
   ];
   return (
     <section className="section" id="how">
       <div className="container">
+        {/* Header */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 60,
-          alignItems: 'end',
-          marginBottom: 72
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          gap: 60, alignItems: 'end', marginBottom: 72
         }}>
           <div>
             <Reveal><div className="eyebrow" style={{ marginBottom: 20 }}>03 / How it works</div></Reveal>
@@ -251,40 +250,87 @@ function HowItWorks() {
           </div>
           <Reveal delay={160}>
             <p className="lede" style={{ marginBottom: 6 }}>
-              We don’t sell you software and disappear. We embed for six weeks, ship
+              We don't sell you software and disappear. We embed for six weeks, ship
               your operating layer, then run it with you for as long as it earns its keep.
             </p>
           </Reveal>
         </div>
 
+        {/* Journey track */}
+        <Reveal delay={200}>
+          <div style={{
+            position: 'relative',
+            padding: '40px 0 0',
+            marginBottom: 24
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 60, left: '8.3%', right: '8.3%',
+              height: 2,
+              background: `linear-gradient(to right,
+                var(--accent) 0%,
+                var(--accent) 32%,
+                color-mix(in oklch, var(--accent) 60%, var(--rule)) 50%,
+                var(--rule-2) 78%,
+                var(--rule) 100%)`
+            }}></div>
+
+            <div style={{
+              display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', position: 'relative'
+            }}>
+              {phases.map((p, i) => (
+                <div key={p.n} style={{
+                  position: 'relative', paddingTop: 78,
+                  paddingLeft: i > 0 ? 28 : 0,
+                  paddingRight: i < 2 ? 28 : 0,
+                }}>
+                  <div style={{
+                    position: 'absolute', top: 50, left: '50%', transform: 'translateX(-50%)',
+                    width: 22, height: 22, borderRadius: '50%',
+                    background: 'var(--bg)',
+                    border: `2px solid ${p.partner ? 'var(--ink)' : 'var(--accent)'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 600,
+                    color: p.partner ? 'var(--ink)' : 'var(--accent)',
+                    boxShadow: '0 0 0 6px var(--bg)'
+                  }}>{p.n}</div>
+                  <div className="mono tiny" style={{
+                    color: 'var(--muted)', letterSpacing: '.1em',
+                    textTransform: 'uppercase', textAlign: 'center'
+                  }}>{p.span}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Phase cards — original wording */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 0,
-          borderTop: '0.5px solid var(--rule)'
+          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0,
         }}>
           {phases.map((p, i) => (
-            <Reveal key={p.n} delay={i * 100} className="phase-cell"
+            <Reveal key={p.n} delay={i * 120} className="phase-cell"
               style={{
-                padding: '40px 32px 36px',
+                padding: '32px 32px 36px',
                 borderRight: i < 2 ? '0.5px solid var(--rule)' : 'none',
                 position: 'relative'
               }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'baseline',
-                justifyContent: 'space-between',
-                marginBottom: 24
-              }}>
-                <span className="display italic" style={{ fontSize: 52, color: 'var(--accent)' }}>{p.n}</span>
-                <span className="mono tiny muted">{p.span}</span>
-              </div>
-              <h3 className="display" style={{ fontSize: 36, margin: '0 0 14px' }}>{p.title}</h3>
+              <h3 className="display" style={{
+                fontSize: 36, margin: '0 0 14px',
+                letterSpacing: '-0.02em'
+              }}>{p.title}</h3>
               <p className="muted" style={{ maxWidth: '32ch' }}>{p.body}</p>
-              <ul style={{ listStyle: 'none', padding: 0, margin: '28px 0 0', display: 'grid', gap: 8 }} className="small">
+              <ul style={{
+                listStyle: 'none', padding: 0,
+                margin: '28px 0 0',
+                display: 'grid', gap: 8
+              }} className="small">
                 {p.bullets.map(b => (
                   <li key={b} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                    <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--ink)' }}></span>
+                    <span style={{
+                      width: 4, height: 4, borderRadius: '50%',
+                      background: p.partner ? 'var(--ink)' : 'var(--accent)'
+                    }}></span>
                     {b}
                   </li>
                 ))}

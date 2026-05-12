@@ -63,9 +63,9 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
 .btn-primary:hover{background:var(--ink-2);border-color:var(--ink-2)}
 .btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
 .btn-accent:hover{background:var(--accent-2);border-color:var(--accent-2)}
-.content{flex:1;overflow-y:auto;padding:24px 28px}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:24px 28px;min-height:0}
 .screen{display:none}
-.screen.active{display:block}
+.screen.active{display:flex;flex-direction:column;flex:1;min-height:0}
 
 /* KPI */
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
@@ -89,6 +89,20 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
 .pipeline-col{display:flex;flex-direction:column;gap:6px}
 .job-card{background:var(--bg);border:1px solid var(--rule);border-radius:var(--radius-md);padding:10px 12px;font-size:12px;cursor:pointer;transition:border-color .12s, transform .12s}
 .job-card:hover{border-color:var(--ink-2);transform:translateY(-1px)}
+.back-link{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:none;padding:0;font-family:var(--font-sans);margin-bottom:14px}
+.back-link:hover{color:var(--ink)}
+.back-link svg{width:14px;height:14px}
+.detail-cards{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-top:14px}
+.kv-row{display:grid;grid-template-columns:1fr auto;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--rule);font-size:13px;gap:14px}
+.kv-row:last-child{border-bottom:none}
+.kv-row .k{color:var(--muted);font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.kv-row .v{font-family:var(--font-mono);font-weight:600;color:var(--ink)}
+.trigger{border-left:3px solid var(--rule-2);background:var(--bg-2);padding:11px 14px;border-radius:0 6px 6px 0;margin:10px 0;display:flex;align-items:center;gap:9px;font-size:12px;font-family:var(--font-mono);color:var(--muted)}
+.trigger.paid{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.trigger.armed{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.milestone-head{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.milestone-head .st.done{color:var(--ok)}
+.milestone-head .st.now{color:var(--accent)}
 .job-name{font-weight:500;color:var(--ink);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .job-meta{color:var(--muted);font-size:11px}
 .job-val{font-size:12px;font-weight:600;color:var(--accent);margin-top:5px;font-family:var(--font-mono)}
@@ -383,26 +397,26 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
         </div>
         <div class="pipeline-jobs">
           <div class="pipeline-col">
-            <div class="job-card"><div class="job-name">M. Chen</div><div class="job-meta">Consult today</div><div style="margin-top:6px"><span class="badge badge-build">Build</span></div></div>
-            <div class="job-card"><div class="job-name">S. Reilly</div><div class="job-meta">Awaiting callback</div><div style="margin-top:6px"><span class="badge badge-design">Design</span></div></div>
+            <div class="job-card" data-lead="M. Chen" data-go="lead-detail"><div class="job-name">M. Chen</div><div class="job-meta">Consult today</div><div style="margin-top:6px"><span class="badge badge-build">Build</span></div></div>
+            <div class="job-card" data-lead="S. Reilly" data-go="lead-detail"><div class="job-name">S. Reilly</div><div class="job-meta">Awaiting callback</div><div style="margin-top:6px"><span class="badge badge-design">Design</span></div></div>
           </div>
           <div class="pipeline-col">
-            <div class="job-card"><div class="job-name">J. Patel</div><div class="job-meta">Expires May 23</div><div class="job-val">$6,742</div></div>
-            <div class="job-card"><div class="job-name">Atlas Build Co.</div><div class="job-meta">Sent Apr 20</div><div class="job-val">$18,400</div></div>
-            <div class="job-card"><div class="job-name">L. Bergman</div><div class="job-meta">Follow-up due</div><div class="job-val">$34,200</div></div>
+            <div class="job-card" data-lead="J. Patel" data-go="lead-detail"><div class="job-name">J. Patel</div><div class="job-meta">Expires May 23</div><div class="job-val">$6,742</div></div>
+            <div class="job-card" data-lead="Atlas Build Co." data-go="lead-detail"><div class="job-name">Atlas Build Co.</div><div class="job-meta">Sent Apr 20</div><div class="job-val">$18,400</div></div>
+            <div class="job-card" data-lead="L. Bergman" data-go="lead-detail"><div class="job-name">L. Bergman</div><div class="job-meta">Follow-up due</div><div class="job-val">$34,200</div></div>
           </div>
           <div class="pipeline-col">
-            <div class="job-card"><div class="job-name">Northgate</div><div class="job-meta">Design signed</div><div class="job-val">$7,500</div><div style="margin-top:6px"><span class="badge badge-design">Design</span></div></div>
+            <div class="job-card" data-lead="Northgate" data-go="lead-detail"><div class="job-name">Northgate</div><div class="job-meta">Design signed</div><div class="job-val">$7,500</div><div style="margin-top:6px"><span class="badge badge-design">Design</span></div></div>
           </div>
           <div class="pipeline-col">
-            <div class="job-card"><div class="job-name">K. Morgan</div><div class="job-meta">Material selection</div><div class="job-val">$24,800</div></div>
-            <div class="job-card"><div class="job-name">D. Whitfield</div><div class="job-meta">Build phase</div><div class="job-val">$41,500</div></div>
+            <div class="job-card" data-lead="K. Morgan" data-go="lead-detail"><div class="job-name">K. Morgan</div><div class="job-meta">Material selection</div><div class="job-val">$24,800</div></div>
+            <div class="job-card" data-lead="D. Whitfield" data-go="lead-detail"><div class="job-name">D. Whitfield</div><div class="job-meta">Build phase</div><div class="job-val">$41,500</div></div>
           </div>
           <div class="pipeline-col">
-            <div class="job-card"><div class="job-name">H. Murray</div><div class="job-meta">Delivery May 2</div><div class="job-val">$19,200</div></div>
+            <div class="job-card" data-lead="H. Murray" data-go="lead-detail"><div class="job-name">H. Murray</div><div class="job-meta">Delivery May 2</div><div class="job-val">$19,200</div></div>
           </div>
           <div class="pipeline-col">
-            <div class="job-card" style="opacity:.55"><div class="job-name">T. Park</div><div class="job-meta">Completed Mar 12</div><div class="job-val">$28,600</div></div>
+            <div class="job-card" data-lead="T. Park" data-go="lead-detail" style="opacity:.55"><div class="job-name">T. Park</div><div class="job-meta">Completed Mar 12</div><div class="job-val">$28,600</div></div>
           </div>
         </div>
         <div class="card" style="margin-top:18px">
@@ -449,31 +463,31 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
       </div>
       <div class="content">
         <div class="card">
-          <div class="customer-row">
+          <div class="customer-row" data-customer="J. Patel" data-go="customer-detail">
             <div class="avatar av-blue">JP</div>
-            <div style="flex:1"><div class="cust-name">J. Patel</div><div class="cust-meta">Homeowner · Region A · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="caa0baabbeafa68aafb2aba7baa6afe4a9a5a7">[email&#160;protected]</a></div></div>
+            <div style="flex:1"><div class="cust-name">J. Patel</div><div class="cust-meta">Homeowner · Region A · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f99389988d9c95b99c81989489959cd79a9694">[email&#160;protected]</a></div></div>
             <div><div class="cust-val">$6,742</div><div class="cust-jobs">1 active quote</div></div>
             <span class="badge badge-quote" style="margin-left:14px">Quote pending</span>
           </div>
-          <div class="customer-row">
+          <div class="customer-row" data-customer="Northgate Construction" data-go="customer-detail">
             <div class="avatar av-teal">NG</div>
             <div style="flex:1"><div class="cust-name">Northgate Construction</div><div class="cust-meta">General contractor · Region B · 4 prior projects</div></div>
             <div><div class="cust-val">$7,500</div><div class="cust-jobs">1 active · 3 complete</div></div>
             <span class="badge badge-active" style="margin-left:14px">Design active</span>
           </div>
-          <div class="customer-row">
+          <div class="customer-row" data-customer="K. Morgan" data-go="customer-detail">
             <div class="avatar av-coral">KM</div>
             <div style="flex:1"><div class="cust-name">K. Morgan</div><div class="cust-meta">Homeowner · Region A · material selection stage</div></div>
             <div><div class="cust-val">$24,800</div><div class="cust-jobs">1 active</div></div>
             <span class="badge badge-active" style="margin-left:14px">Job active</span>
           </div>
-          <div class="customer-row">
+          <div class="customer-row" data-customer="D. Whitfield" data-go="customer-detail">
             <div class="avatar av-amber">DW</div>
             <div style="flex:1"><div class="cust-name">D. Whitfield</div><div class="cust-meta">Homeowner · Region C · build phase</div></div>
             <div><div class="cust-val">$41,500</div><div class="cust-jobs">1 active · 1 complete</div></div>
             <span class="badge badge-active" style="margin-left:14px">Job active</span>
           </div>
-          <div class="customer-row">
+          <div class="customer-row" data-customer="T. Park" data-go="customer-detail">
             <div class="avatar av-teal">TP</div>
             <div style="flex:1"><div class="cust-name">T. Park</div><div class="cust-meta">Homeowner · Region A · completed Mar 2026</div></div>
             <div><div class="cust-val">$28,600</div><div class="cust-jobs">1 complete</div></div>
@@ -867,31 +881,31 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
           <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;font-size:10px;color:var(--muted);font-weight:500;padding-bottom:10px;border-bottom:1px solid var(--rule);margin-bottom:8px;font-family:var(--font-mono);letter-spacing:.05em;text-transform:uppercase">
             <div>Project / lead</div><div>Apr — May — Jun timeline</div><div style="text-align:right">Budget</div><div style="text-align:right">Health</div>
           </div>
-          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)">
+          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule);cursor:pointer" data-project="K. Morgan build" data-go="project-detail">
             <div><div style="font-size:13px;font-weight:500">K. Morgan build</div><div style="font-size:11px;color:var(--muted);margin-top:2px">PM · J. Reyes</div></div>
             <div style="position:relative;height:18px;background:var(--bg-2);border-radius:4px;overflow:hidden"><div style="position:absolute;left:6%;width:42%;top:0;bottom:0;background:var(--accent);border-radius:4px"></div><div style="position:absolute;left:6%;width:24%;top:0;bottom:0;background:var(--accent-2);border-radius:4px 0 0 4px"></div><span style="position:absolute;right:6px;top:1px;font-size:10px;color:var(--muted);font-family:var(--font-mono)">62%</span></div>
             <div style="text-align:right;font-family:var(--font-mono);font-weight:600;font-size:12.5px">$24,800</div>
             <div style="text-align:right"><span class="badge badge-active">On track</span></div>
           </div>
-          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)">
+          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule);cursor:pointer" data-project="D. Whitfield build" data-go="project-detail">
             <div><div style="font-size:13px;font-weight:500">D. Whitfield build</div><div style="font-size:11px;color:var(--muted);margin-top:2px">PM · S. Lee</div></div>
             <div style="position:relative;height:18px;background:var(--bg-2);border-radius:4px;overflow:hidden"><div style="position:absolute;left:18%;width:60%;top:0;bottom:0;background:var(--ok);border-radius:4px"></div><div style="position:absolute;left:18%;width:48%;top:0;bottom:0;background:var(--ok);opacity:.5;border-radius:4px 0 0 4px"></div><span style="position:absolute;right:6px;top:1px;font-size:10px;color:var(--muted);font-family:var(--font-mono)">80%</span></div>
             <div style="text-align:right;font-family:var(--font-mono);font-weight:600;font-size:12.5px">$41,500</div>
             <div style="text-align:right"><span class="badge badge-contract">On track</span></div>
           </div>
-          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)">
+          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule);cursor:pointer" data-project="Northgate design pkg" data-go="project-detail">
             <div><div style="font-size:13px;font-weight:500">Northgate design pkg</div><div style="font-size:11px;color:var(--muted);margin-top:2px">PM · M. Khan</div></div>
             <div style="position:relative;height:18px;background:var(--bg-2);border-radius:4px;overflow:hidden"><div style="position:absolute;left:10%;width:36%;top:0;bottom:0;background:var(--warn);border-radius:4px"></div><div style="position:absolute;left:10%;width:18%;top:0;bottom:0;background:var(--warn);opacity:.5;border-radius:4px 0 0 4px"></div><span style="position:absolute;right:6px;top:1px;font-size:10px;color:var(--muted);font-family:var(--font-mono)">50%</span></div>
             <div style="text-align:right;font-family:var(--font-mono);font-weight:600;font-size:12.5px">$7,500</div>
             <div style="text-align:right"><span class="badge badge-quote">At risk</span></div>
           </div>
-          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)">
+          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule);cursor:pointer" data-project="H. Murray delivery" data-go="project-detail">
             <div><div style="font-size:13px;font-weight:500">H. Murray delivery</div><div style="font-size:11px;color:var(--muted);margin-top:2px">PM · J. Reyes</div></div>
             <div style="position:relative;height:18px;background:var(--bg-2);border-radius:4px;overflow:hidden"><div style="position:absolute;left:38%;width:30%;top:0;bottom:0;background:var(--info);border-radius:4px"></div><div style="position:absolute;left:38%;width:28%;top:0;bottom:0;background:var(--info);opacity:.5;border-radius:4px 0 0 4px"></div><span style="position:absolute;right:6px;top:1px;font-size:10px;color:var(--muted);font-family:var(--font-mono)">93%</span></div>
             <div style="text-align:right;font-family:var(--font-mono);font-weight:600;font-size:12.5px">$19,200</div>
             <div style="text-align:right"><span class="badge badge-active">On track</span></div>
           </div>
-          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0">
+          <div style="display:grid;grid-template-columns:200px 1fr 90px 90px;gap:12px;align-items:center;padding:12px 0;cursor:pointer" data-project="Atlas Build prep" data-go="project-detail">
             <div><div style="font-size:13px;font-weight:500">Atlas Build prep</div><div style="font-size:11px;color:var(--muted);margin-top:2px">PM · unassigned</div></div>
             <div style="position:relative;height:18px;background:var(--bg-2);border-radius:4px;overflow:hidden"><div style="position:absolute;left:55%;width:6%;top:0;bottom:0;background:oklch(0.62 0.20 25);border-radius:4px"></div><span style="position:absolute;right:6px;top:1px;font-size:10px;color:var(--muted);font-family:var(--font-mono)">10%</span></div>
             <div style="text-align:right;font-family:var(--font-mono);font-weight:600;font-size:12.5px">$18,400</div>
@@ -1310,6 +1324,237 @@ body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-siz
         </div>
       </div>
     </div>
+
+    <!-- LEAD DETAIL (clicked from Pipeline) -->
+    <div id="screen-lead-detail" class="screen">
+      <div class="topbar">
+        <div>
+          <button class="back-link" data-back="pipeline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Back to Pipeline
+          </button>
+          <div class="topbar-title"><span id="lead-name">Lead</span> · hot · score 94</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn">Edit</button>
+          <button class="btn btn-accent">Approve &amp; send quote →</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-label">Quote value</div><div class="kpi-val">$41,500</div><div class="kpi-sub">drafted 14h ago</div></div>
+          <div class="kpi"><div class="kpi-label">Realised margin</div><div class="kpi-val" style="color:var(--ok)">64%</div><div class="kpi-sub">target 30%</div></div>
+          <div class="kpi"><div class="kpi-label">Close probability</div><div class="kpi-val" style="color:var(--accent)">72%</div><div class="kpi-sub">based on past wins</div></div>
+          <div class="kpi"><div class="kpi-label">Lead score</div><div class="kpi-val">94<span style="font-size:13px;color:var(--muted)">/100</span></div><div class="kpi-sub">referral · warm intro</div></div>
+        </div>
+
+        <div class="detail-cards">
+          <div class="card">
+            <div class="section-label">Autopilot · what it did</div>
+            <div class="feed-item">
+              <span class="feed-dot feed-dot-green"></span>
+              <div class="feed-text">Parsed RFQ from email + attached PDF — extracted scope, room dimensions, finish preferences.</div>
+              <span class="feed-time">14h</span>
+            </div>
+            <div class="feed-item">
+              <span class="feed-dot feed-dot-green"></span>
+              <div class="feed-text">Priced against live supplier feeds — cross-checked 4 vendors, selected Alpha + Delta blend.</div>
+              <span class="feed-time">14h</span>
+            </div>
+            <div class="feed-item">
+              <span class="feed-dot feed-dot-amber"></span>
+              <div class="feed-text">Drafted 3 quote options (standard / premium / premium + finish upgrade). Awaiting your approval.</div>
+              <span class="feed-time">2m</span>
+            </div>
+            <div class="feed-item">
+              <span class="feed-dot feed-dot-faint" style="background:var(--faint)"></span>
+              <div class="feed-text">Scheduled: 7-day quote follow-up cadence (queued · disarms on customer reply).</div>
+              <span class="feed-time">queued</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-label">Recommended quote · option 2</div>
+            <div class="kv-row"><span class="k">Carcase &amp; doors</span><span class="v">$18,200</span></div>
+            <div class="kv-row"><span class="k">Hardware · soft-close premium</span><span class="v">$4,180</span></div>
+            <div class="kv-row"><span class="k">Premium veneer finish</span><span class="v">$6,340</span></div>
+            <div class="kv-row"><span class="k">Install &amp; finishing</span><span class="v">$8,900</span></div>
+            <div class="kv-row"><span class="k">Delivery + site protect</span><span class="v">$1,200</span></div>
+            <div class="kv-row"><span class="k">Tax (estimated)</span><span class="v">$2,680</span></div>
+            <div class="kv-row" style="border-top:1.5px solid var(--ink);padding-top:14px;margin-top:6px">
+              <span class="k" style="color:var(--ink);font-family:var(--font-sans);font-size:13px;font-weight:600;letter-spacing:0;text-transform:none">Total</span>
+              <span class="v" style="font-size:20px;color:var(--accent)">$41,500</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:6px">
+          <div class="section-label">If you approve, autopilot will</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+            <div style="padding:14px;background:var(--bg-2);border-radius:8px"><div class="mono tiny" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">01</div><div style="font-size:13px;color:var(--ink-2)">Send PDF + e-sign link</div></div>
+            <div style="padding:14px;background:var(--bg-2);border-radius:8px"><div class="mono tiny" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">02</div><div style="font-size:13px;color:var(--ink-2)">Create deal in CRM</div></div>
+            <div style="padding:14px;background:var(--bg-2);border-radius:8px"><div class="mono tiny" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">03</div><div style="font-size:13px;color:var(--ink-2)">Schedule 7-day follow-up</div></div>
+            <div style="padding:14px;background:var(--bg-2);border-radius:8px"><div class="mono tiny" style="color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">04</div><div style="font-size:13px;color:var(--ink-2)">Auto-invoice 30% on signature</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT DETAIL (clicked from Projects) -->
+    <div id="screen-project-detail" class="screen">
+      <div class="topbar">
+        <div>
+          <button class="back-link" data-back="projects">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Back to Projects
+          </button>
+          <div class="topbar-title"><span id="project-name">K. Morgan build</span> · in production</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn">Edit</button>
+          <button class="btn btn-accent">+ Add task</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-label">Contract</div><div class="kpi-val">$24,800</div><div class="kpi-sub">4 milestones</div></div>
+          <div class="kpi"><div class="kpi-label">Invoiced</div><div class="kpi-val" style="color:var(--ok)">$17,360</div><div class="kpi-sub">70% · 2 paid</div></div>
+          <div class="kpi"><div class="kpi-label">Margin to date</div><div class="kpi-val">38%</div><div class="kpi-sub">target 30%</div></div>
+          <div class="kpi"><div class="kpi-label">Install date</div><div class="kpi-val">May 21</div><div class="kpi-sub">on schedule</div></div>
+        </div>
+
+        <div class="detail-cards">
+          <div class="card">
+            <div class="section-label">Milestones · auto-invoice on close</div>
+
+            <div class="milestone-head"><span>M1 · Design sign-off</span><span class="st done">closed apr 14</span></div>
+            <div class="task-list">
+              <div class="task"><div class="task-check done"></div><div class="task-name done">Site measure complete</div><div class="task-stage">M. Khan · Apr 4</div></div>
+              <div class="task"><div class="task-check done"></div><div class="task-name done">Drawings v2 approved by client</div><div class="task-stage">Apr 11</div></div>
+              <div class="task"><div class="task-check done"></div><div class="task-name done">Contract counter-signed</div><div class="task-stage">Apr 14</div></div>
+            </div>
+            <div class="trigger paid">⇶ Auto-invoice INV-039 · $7,440 · paid Apr 16</div>
+
+            <div class="milestone-head"><span>M2 · Materials ordered</span><span class="st done">closed apr 24</span></div>
+            <div class="task-list">
+              <div class="task"><div class="task-check done"></div><div class="task-name done">Supplier Alpha PO sent</div><div class="task-stage">auto · Apr 17</div></div>
+              <div class="task"><div class="task-check done"></div><div class="task-name done">Hardware order confirmed</div><div class="task-stage">Apr 20</div></div>
+              <div class="task"><div class="task-check done"></div><div class="task-name done">Materials received &amp; inspected</div><div class="task-stage">R. Adler · Apr 24</div></div>
+            </div>
+            <div class="trigger paid">⇶ Auto-invoice INV-041 · $9,920 · paid Apr 28</div>
+
+            <div class="milestone-head" style="color:var(--accent)"><span>M3 · Build complete</span><span class="st now">in progress</span></div>
+            <div class="task-list">
+              <div class="task"><div class="task-check done"></div><div class="task-name done">Carcase assembled</div><div class="task-stage">May 2</div></div>
+              <div class="task"><div class="task-check done"></div><div class="task-name done">Doors &amp; drawer fronts</div><div class="task-stage">May 7</div></div>
+              <div class="task"><div class="task-check active"></div><div class="task-name active">Hardware install &amp; finishing</div><div class="task-stage" style="color:var(--accent)">due May 14</div></div>
+              <div class="task"><div class="task-check"></div><div class="task-name">QC photos sent to client</div><div class="task-stage">auto · pending</div></div>
+            </div>
+            <div class="trigger armed">⇶ Will auto-invoice INV-044 · $4,960 on milestone close <span style="margin-left:auto;font-size:10px;letter-spacing:.06em;text-transform:uppercase">Armed</span></div>
+
+            <div class="milestone-head"><span>M4 · Delivery &amp; install</span><span class="st">queued</span></div>
+            <div class="task-list">
+              <div class="task"><div class="task-check"></div><div class="task-name">Schedule install with client</div><div class="task-stage">J. Reyes · May 16</div></div>
+              <div class="task"><div class="task-check"></div><div class="task-name">On-site install &amp; punch list</div><div class="task-stage">R. Adler · May 21</div></div>
+              <div class="task"><div class="task-check"></div><div class="task-name">Client sign-off</div><div class="task-stage">May 22</div></div>
+            </div>
+            <div class="trigger">⇶ Final invoice INV-045 · $2,480 · armed on sign-off</div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="section-label">Auto-invoice schedule</div>
+              <div class="kv-row"><span class="k">M1 Design</span><span class="v" style="color:var(--ok)">100% · paid</span></div>
+              <div class="kv-row"><span class="k">M2 Materials</span><span class="v" style="color:var(--ok)">100% · paid</span></div>
+              <div class="kv-row"><span class="k">M3 Build</span><span class="v" style="color:var(--accent)">75% · armed</span></div>
+              <div class="kv-row"><span class="k">M4 Install</span><span class="v" style="color:var(--muted)">0% · queued</span></div>
+            </div>
+            <div class="card">
+              <div class="section-label">Rules · this project</div>
+              <div class="kv-row"><span class="k">Trigger</span><span class="v" style="font-weight:500;font-family:var(--font-sans);font-size:12px;color:var(--ink-2);text-align:right;line-height:1.4">All tasks closed →<br/>generate invoice</span></div>
+              <div class="kv-row"><span class="k">Schedule</span><span class="v" style="font-size:12px">30/40/20/10</span></div>
+              <div class="kv-row"><span class="k">Follow-up</span><span class="v" style="font-size:12px">+5d · +12d · +21d</span></div>
+              <div class="kv-row"><span class="k">Payment</span><span class="v" style="font-size:12px">ACH · card +2.9%</span></div>
+            </div>
+            <div class="card">
+              <div class="section-label">Team</div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule)"><div class="avatar av-blue">JR</div><div><div style="font-size:13px;font-weight:500">J. Reyes</div><div style="font-size:11px;color:var(--muted)">PM</div></div></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule)"><div class="avatar av-coral">MK</div><div><div style="font-size:13px;font-weight:500">M. Khan</div><div style="font-size:11px;color:var(--muted)">Designer</div></div></div>
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 0"><div class="avatar av-amber">RA</div><div><div style="font-size:13px;font-weight:500">R. Adler</div><div style="font-size:11px;color:var(--muted)">Build lead</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMER DETAIL (clicked from Customers / People) -->
+    <div id="screen-customer-detail" class="screen">
+      <div class="topbar">
+        <div>
+          <button class="back-link" data-back="customers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Back
+          </button>
+          <div class="topbar-title"><span id="customer-name">Customer</span></div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn">Message</button>
+          <button class="btn btn-accent">+ New quote</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="kpi-row">
+          <div class="kpi"><div class="kpi-label">Lifetime value</div><div class="kpi-val">$24,800</div><div class="kpi-sub">1 project · 0 complete</div></div>
+          <div class="kpi"><div class="kpi-label">Stage</div><div class="kpi-val">Job active</div><div class="kpi-sub">M3 · in production</div></div>
+          <div class="kpi"><div class="kpi-label">Last contact</div><div class="kpi-val">2d</div><div class="kpi-sub">via autopilot</div></div>
+          <div class="kpi"><div class="kpi-label">Health score</div><div class="kpi-val" style="color:var(--ok)">A</div><div class="kpi-sub">payment on time · responsive</div></div>
+        </div>
+
+        <div class="detail-cards">
+          <div class="card">
+            <div class="section-label">Communications · timeline</div>
+            <div class="comm-item">
+              <div class="comm-icon comm-email">✉</div>
+              <div class="comm-body"><div class="comm-subject">Quote sent — 3 material options</div><div class="comm-preview">Attached is the rough quote for your build. This is subject to change once final materials are confirmed.</div><div class="comm-time">Apr 23 · autopilot</div></div>
+            </div>
+            <div class="comm-item">
+              <div class="comm-icon comm-sms">✆</div>
+              <div class="comm-body"><div class="comm-subject">SMS · quote-sent notification</div><div class="comm-preview">Hi — your quote is in your inbox. Let us know if you have any questions.</div><div class="comm-time">Apr 23 · autopilot</div></div>
+            </div>
+            <div class="comm-item">
+              <div class="comm-icon comm-meet">◇</div>
+              <div class="comm-body"><div class="comm-subject">On-site consultation complete</div><div class="comm-preview">Measured: 14.2 lft uppers, 18.6 lft lowers. Door options discussed: Standard, Premium-A, Premium-B.</div><div class="comm-time">Apr 20 · staff</div></div>
+            </div>
+            <div class="comm-item">
+              <div class="comm-icon comm-call">☎</div>
+              <div class="comm-body"><div class="comm-subject">Inbound call · initial inquiry</div><div class="comm-preview">AI summary: customer inquiring about cabinet replacement. Interested in wood door options. Budget flexible.</div><div class="comm-time">Apr 18 · autopilot transcribed</div></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="section-label">Identity</div>
+              <div class="kv-row"><span class="k">Type</span><span class="v" style="font-family:var(--font-sans);text-transform:none;letter-spacing:0;font-size:13px">Homeowner</span></div>
+              <div class="kv-row"><span class="k">Region</span><span class="v" style="font-family:var(--font-sans);text-transform:none;letter-spacing:0;font-size:13px">Region A</span></div>
+              <div class="kv-row"><span class="k">Source</span><span class="v" style="font-family:var(--font-sans);text-transform:none;letter-spacing:0;font-size:13px">Web form · referral</span></div>
+              <div class="kv-row"><span class="k">First touch</span><span class="v" style="font-size:12px">Apr 18, 2026</span></div>
+            </div>
+            <div class="card">
+              <div class="section-label">Autopilot rules</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--rule);font-size:12.5px">
+                <span>7-day quote follow-up</span><span class="badge badge-active">Armed</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--rule);font-size:12.5px">
+                <span>Milestone update cadence</span><span class="badge badge-active">Active</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:12.5px">
+                <span>Review request on completion</span><span class="badge badge-faint" style="background:var(--bg-2);color:var(--muted)">Queued</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1328,7 +1573,27 @@ document.querySelectorAll('.nav-item[data-screen]').forEach(function(n){
   n.addEventListener('click',function(){showScreen(n.getAttribute('data-screen'))});
 });
 document.querySelectorAll('[data-go]').forEach(function(b){
-  b.addEventListener('click',function(){showScreen(b.getAttribute('data-go'))});
+  b.addEventListener('click',function(){
+    // If the element carries a context (lead/project/customer name), update the detail title.
+    var target=b.getAttribute('data-go');
+    if(target==='lead-detail'){
+      var n=b.getAttribute('data-lead');
+      if(n){var t=document.getElementById('lead-name');if(t)t.textContent=n;}
+    } else if(target==='project-detail'){
+      var n=b.getAttribute('data-project');
+      if(n){var t=document.getElementById('project-name');if(t)t.textContent=n;}
+    } else if(target==='customer-detail'){
+      var n=b.getAttribute('data-customer');
+      if(n){var t=document.getElementById('customer-name');if(t)t.textContent=n;}
+    }
+    showScreen(target);
+  });
+});
+document.querySelectorAll('[data-back]').forEach(function(b){
+  b.addEventListener('click',function(e){
+    e.stopPropagation();
+    showScreen(b.getAttribute('data-back'));
+  });
 });
 document.querySelectorAll('.mode-pill').forEach(function(p){
   p.addEventListener('click',function(){

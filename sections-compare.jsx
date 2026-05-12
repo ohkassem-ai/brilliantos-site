@@ -1,124 +1,175 @@
-// sections-compare.jsx — Before/After workflow toggle + Live product preview
+// sections-compare.jsx — Before/After workflow comparison + Live product preview
 
-/* BEFORE / AFTER toggle on a real workflow (quote request) */
+/* BEFORE / AFTER — visual side-by-side */
 function BeforeAfter() {
-  const [mode, setMode] = useState('after');
+  const before = {
+    label: 'BEFORE',
+    sub: 'Manual workflow',
+    duration: '3 days',
+    durationSub: '4 humans · 19 hand-offs',
+    steps: [
+      { t: 'Mon', d: 'RFQ lands in inbox' },
+      { t: 'Tue', d: 'Ops chases supplier prices' },
+      { t: 'Wed', d: 'Quote drafted in Excel' },
+      { t: 'Thu', d: 'Quote sent · 32% margin' },
+    ],
+    metrics: [
+      { v: '3 days',   k: 'Turnaround' },
+      { v: '32%',      k: 'Margin' },
+      { v: '4.2 hrs',  k: 'Founder time' },
+    ],
+    accent: false,
+  };
+  const after = {
+    label: 'WITH BRILLIANTOS',
+    sub: 'Autopilot',
+    duration: '6 min',
+    durationSub: '1 tap to approve',
+    steps: [
+      { t: '09:14', d: 'Autopilot parses RFQ + supplier prices' },
+      { t: '09:17', d: 'Quote drafted at 38% margin' },
+      { t: '09:18', d: 'You approve from phone' },
+      { t: '09:20', d: 'Sent · filed in CRM · follow-up armed' },
+    ],
+    metrics: [
+      { v: '6 min',   k: 'Turnaround' },
+      { v: '38%',     k: 'Margin' },
+      { v: '0.1 hr',  k: 'Founder time' },
+    ],
+    accent: true,
+  };
   return (
     <section className="section" style={{ background: 'var(--bg-2)' }}>
       <div className="container">
-        <div style={{
-          display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'end',
-          gap: 40, marginBottom: 56
-        }}>
-          <div>
-            <Reveal><div className="eyebrow" style={{ marginBottom: 20 }}>04 / Before & after</div></Reveal>
-            <Reveal delay={80}>
-              <h2 className="display h2" style={{ margin: 0 }}>
-                The same RFQ.<br/>
-                <span className="italic" style={{ color: 'var(--accent)' }}>Two different days.</span>
-              </h2>
-            </Reveal>
-          </div>
-          <Reveal delay={160}>
-            <div style={{
-              display: 'inline-flex',
-              padding: 4,
-              borderRadius: 999,
-              border: '0.5px solid var(--rule-2)',
-              background: 'var(--bg)'
-            }}>
-              {['before', 'after'].map(m => (
-                <button key={m} onClick={() => setMode(m)}
-                  style={{
-                    padding: '10px 22px',
-                    borderRadius: 999,
-                    border: 0,
-                    background: mode === m ? 'var(--ink)' : 'transparent',
-                    color: mode === m ? 'var(--bg)' : 'var(--ink-2)',
-                    fontFamily: 'var(--mono)',
-                    fontSize: 12,
-                    letterSpacing: '.08em',
-                    textTransform: 'uppercase',
-                  }}>
-                  {m === 'before' ? 'Before BrilliantOS' : 'With BrilliantOS'}
-                </button>
-              ))}
-            </div>
+        <div style={{ marginBottom: 48 }}>
+          <Reveal><div className="eyebrow" style={{ marginBottom: 20 }}>04 / Before & after</div></Reveal>
+          <Reveal delay={80}>
+            <h2 className="display h2" style={{ margin: 0, maxWidth: '20ch' }}>
+              The same RFQ.<br/>
+              <span className="italic" style={{ color: 'var(--accent)' }}>One Monday morning.</span>
+            </h2>
           </Reveal>
         </div>
 
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 24,
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, alignItems: 'stretch'
         }}>
-          <Reveal>
-            <Timeline mode={mode} />
-          </Reveal>
-          <Reveal delay={100}>
-            <MetricsPanel mode={mode} />
-          </Reveal>
+          <Reveal><BeforeAfterCard data={before} /></Reveal>
+          <Reveal delay={120}><BeforeAfterCard data={after} /></Reveal>
         </div>
+
+        <Reveal delay={240}>
+          <div style={{
+            marginTop: 24,
+            padding: '28px 32px',
+            background: 'var(--ink)',
+            color: 'var(--bg)',
+            borderRadius: 16,
+            display: 'grid', gridTemplateColumns: 'auto 1fr 1fr 1fr',
+            gap: 32, alignItems: 'center'
+          }}>
+            <div className="mono tiny" style={{ letterSpacing: '.14em', color: 'oklch(0.85 0.13 65)' }}>
+              ● NET RESULT
+            </div>
+            <Multiplier v="720×" k="faster" />
+            <Multiplier v="140×" k="cheaper" />
+            <Multiplier v="+6 pts" k="margin" />
+          </div>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-function Timeline({ mode }) {
-  const before = [
-    { d: 'Mon 09:14', who: 'Inbox',        what: 'RFQ from Northgate lands. Owner is in a meeting.' },
-    { d: 'Mon 16:40', who: 'Owner',        what: 'Forwards to ops lead with “can you look”.' },
-    { d: 'Tue 11:02', who: 'Ops lead',     what: 'Pings supplier for current pricing on 14 SKUs.' },
-    { d: 'Wed 09:30', who: 'Supplier',     what: 'Returns price sheet. 3 SKUs out of stock.' },
-    { d: 'Wed 15:50', who: 'Ops lead',     what: 'Drafts quote in Excel. Margin checked manually.' },
-    { d: 'Thu 10:20', who: 'Owner',        what: 'Reviews, fixes line items, signs off.' },
-    { d: 'Thu 14:00', who: 'Sales',        what: 'Quote sent.' },
-    { d: '—',     who: 'Pipeline',    what: 'CRM still says “new lead”.', muted: true },
-  ];
-  const after = [
-    { d: 'Mon 09:14', who: 'BrilliantOS',  what: 'Detects RFQ. Parses 14 SKUs + delivery window.' },
-    { d: 'Mon 09:15', who: 'BrilliantOS',  what: 'Queries live supplier prices via ERP. Flags 3 OOS, swaps to alternates.' },
-    { d: 'Mon 09:17', who: 'BrilliantOS',  what: 'Drafts quote at 38% margin in your voice.' },
-    { d: 'Mon 09:18', who: 'Owner',        what: 'Single tap to approve from phone.' },
-    { d: 'Mon 09:20', who: 'BrilliantOS',  what: 'Sends quote, files in CRM, moves stage → Proposal.' },
-    { d: 'Mon 09:21', who: 'BrilliantOS',  what: 'Schedules a follow-up nudge for Thursday 10am.' },
-    { d: 'Thu 10:00', who: 'BrilliantOS',  what: 'Sends warm follow-up. Reply received.' },
-    { d: 'Thu 10:12', who: 'Outcome',      what: 'Quote accepted. $48,200 booked.', emph: true },
-  ];
-  const items = mode === 'before' ? before : after;
+function BeforeAfterCard({ data }) {
   return (
-    <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+    <div className="card" style={{
+      padding: 0, overflow: 'hidden', height: '100%',
+      display: 'flex', flexDirection: 'column',
+      background: data.accent ? 'var(--bg)' : 'var(--bg)',
+      borderColor: data.accent ? 'var(--accent)' : 'var(--rule)',
+      borderWidth: data.accent ? '1px' : '0.5px',
+    }}>
+      {/* Header — label + giant duration */}
       <div style={{
-        padding: '14px 20px', borderBottom: '0.5px solid var(--rule)',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+        padding: '32px 32px 28px',
+        borderBottom: '0.5px solid var(--rule)',
+        background: data.accent ? 'var(--accent-soft)' : 'var(--bg-2)'
       }}>
-        <span className="mono tiny" style={{ letterSpacing: '.12em', textTransform: 'uppercase' }}>
-          {mode === 'before' ? 'Workflow · manual' : 'Workflow · autopilot'}
-        </span>
-        <span className="mono tiny muted">
-          {mode === 'before' ? '3 days, 4 humans' : '6 minutes, 1 tap'}
-        </span>
+        <div className="mono tiny" style={{
+          letterSpacing: '.14em',
+          color: data.accent ? 'var(--accent)' : 'var(--muted)',
+          marginBottom: 12
+        }}>● {data.label}</div>
+        <div className="display" style={{
+          fontSize: 72,
+          lineHeight: 1,
+          color: data.accent ? 'var(--accent)' : 'var(--ink-2)',
+          letterSpacing: '-0.025em'
+        }}>{data.duration}</div>
+        <div className="small" style={{
+          marginTop: 10,
+          color: 'var(--muted)'
+        }}>{data.durationSub}</div>
       </div>
-      <div style={{ padding: '6px 0' }}>
-        {items.map((it, i) => (
-          <div key={i} style={{
-            display: 'grid',
-            gridTemplateColumns: '90px 110px 1fr',
-            gap: 18,
-            padding: '14px 20px',
-            borderTop: i === 0 ? 'none' : '0.5px dashed var(--rule)',
-            alignItems: 'baseline',
-            opacity: it.muted ? .55 : 1
+
+      {/* Timeline — 4 dots on a vertical line */}
+      <div style={{ padding: '24px 32px 12px', flex: 1 }}>
+        <div style={{ position: 'relative', paddingLeft: 24 }}>
+          {/* Vertical line */}
+          <div style={{
+            position: 'absolute', left: 5, top: 8, bottom: 8,
+            width: 1,
+            background: data.accent ? 'var(--accent)' : 'var(--rule-2)',
+            opacity: data.accent ? 0.4 : 0.8
+          }}></div>
+          {data.steps.map((s, i) => (
+            <div key={i} style={{
+              position: 'relative',
+              padding: '10px 0',
+            }}>
+              <div style={{
+                position: 'absolute', left: -24, top: 14,
+                width: 11, height: 11, borderRadius: '50%',
+                background: data.accent ? 'var(--accent)' : 'var(--muted)',
+                boxShadow: `0 0 0 4px ${data.accent ? 'var(--bg)' : 'var(--bg)'}`,
+              }}></div>
+              <div style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+                gap: 16
+              }}>
+                <span style={{ fontSize: 14, color: 'var(--ink-2)' }}>{s.d}</span>
+                <span className="mono tiny" style={{
+                  color: 'var(--muted)', letterSpacing: '.04em', whiteSpace: 'nowrap'
+                }}>{s.t}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Metrics — 3 hero numbers */}
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+        borderTop: '0.5px solid var(--rule)',
+      }}>
+        {data.metrics.map((m, i) => (
+          <div key={m.k} style={{
+            padding: '22px 12px',
+            textAlign: 'center',
+            borderRight: i < 2 ? '0.5px solid var(--rule)' : 'none',
           }}>
-            <span className="mono tiny" style={{ color: 'var(--muted)' }}>{it.d}</span>
-            <span className="small" style={{
-              color: it.who === 'BrilliantOS' ? 'var(--accent)' : 'var(--ink-2)',
-              fontWeight: 500
-            }}>{it.who}</span>
-            <span className="small" style={{
-              color: it.emph ? 'var(--ink)' : 'var(--ink-2)',
-              fontWeight: it.emph ? 500 : 400
-            }}>{it.what}</span>
+            <div className="display" style={{
+              fontSize: 28,
+              color: data.accent ? 'var(--accent)' : 'var(--ink-2)',
+              lineHeight: 1
+            }}>{m.v}</div>
+            <div className="mono tiny" style={{
+              marginTop: 8,
+              color: 'var(--muted)',
+              letterSpacing: '.06em',
+              textTransform: 'uppercase'
+            }}>{m.k}</div>
           </div>
         ))}
       </div>
@@ -126,56 +177,20 @@ function Timeline({ mode }) {
   );
 }
 
-function MetricsPanel({ mode }) {
-  const data = mode === 'before'
-    ? { time: '3 days', taps: 19, margin: '32%', cost: '$420', humanHrs: '4.2 hrs' }
-    : { time: '6 min',  taps: 1,  margin: '38%', cost: '$3',   humanHrs: '0.1 hr'  };
+function Multiplier({ v, k }) {
   return (
-    <div className="card" style={{ padding: 32, background: 'var(--bg)' }}>
-      <div className="mono tiny muted" style={{ letterSpacing: '.1em' }}>SAME RFQ · DIFFERENT OUTCOME</div>
-      <div style={{ marginTop: 28, display: 'grid', gap: 0 }}>
-        <Metric label="Time to sent quote"   value={data.time}     mode={mode}/>
-        <Metric label="Human touch-points"   value={data.taps}     mode={mode}/>
-        <Metric label="Realised gross margin" value={data.margin}  mode={mode}/>
-        <Metric label="Cost to produce quote" value={data.cost}    mode={mode}/>
-        <Metric label="Founder + ops hours"  value={data.humanHrs} mode={mode}/>
-      </div>
-      <div style={{
-        marginTop: 36, padding: 18,
-        borderRadius: 12,
-        background: mode === 'before' ? 'transparent' : 'var(--accent-soft)',
-        border: '0.5px solid var(--rule)'
-      }}>
-        <div className="mono tiny muted" style={{ letterSpacing: '.1em' }}>NET</div>
-        <div className="display" style={{
-          fontSize: 30, marginTop: 6,
-          color: mode === 'before' ? 'var(--ink-2)' : 'var(--accent-2)'
-        }}>
-          {mode === 'before'
-            ? 'A quote that costs more to make than it makes.'
-            : '720× faster. 140× cheaper. 6 points more margin.'}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Metric({ label, value, mode }) {
-  return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: '1fr auto',
-      alignItems: 'baseline',
-      padding: '16px 0',
-      borderBottom: '0.5px solid var(--rule)',
-      gap: 16
-    }}>
-      <span className="small muted">{label}</span>
-      <span className="display" style={{
-        fontSize: 28,
-        color: mode === 'before' ? 'var(--ink)' : 'var(--accent)',
-        fontVariantNumeric: 'tabular-nums'
-      }}>{value}</span>
+    <div>
+      <div className="display" style={{
+        fontSize: 44, lineHeight: 1,
+        color: 'oklch(0.85 0.13 65)',
+        letterSpacing: '-0.02em'
+      }}>{v}</div>
+      <div className="mono tiny" style={{
+        marginTop: 6,
+        color: 'oklch(0.75 0.012 75)',
+        letterSpacing: '.08em',
+        textTransform: 'uppercase'
+      }}>{k}</div>
     </div>
   );
 }
@@ -185,7 +200,7 @@ function LivePreview() {
   const [tab, setTab] = useState('inbox');
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 720px)');
+    const mq = window.matchMedia('(max-width: 820px)');
     const update = () => setIsMobile(mq.matches);
     update();
     mq.addEventListener ? mq.addEventListener('change', update) : mq.addListener(update);
