@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Book a discovery call — BrilliantOS</title>
+  <meta name="description" content="30-minute discovery call. We walk one of your real workflows together and tell you whether autopilot fits. No deck." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta property="og:title" content="BrilliantOS — Autopilot for your business" />
+  <meta property="og:description" content="Custom-built AI systems for SMBs. Fixed fees, refunded if we miss." />
+  <meta property="og:type" content="website" />
+
+  <script>
+  try {
+    const t = JSON.parse(localStorage.getItem('brilliantos-tweaks') || 'null');
+    if (t) {
+      if (t.palette) document.documentElement.setAttribute('data-palette', t.palette);
+      if (t.display) document.documentElement.setAttribute('data-display', t.display);
+      document.documentElement.setAttribute('data-theme', t.dark ? 'dark' : 'light');
+      document.addEventListener('DOMContentLoaded', () => {
+        if (t.density) document.body.setAttribute('data-density', t.density);
+      });
+    }
+  } catch(e){}
+  </script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <style>
+    /* Form styling */
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+    .field label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: var(--bg);
+      border: none;
+      border-bottom: 0.5px solid var(--rule);
+      padding: 10px 0;
+      font-family: var(--sans);
+      font-size: 17px;
+      color: var(--ink);
+      transition: border-color .2s;
+      border-radius: 0;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-bottom-color: var(--accent);
+    }
+    .field textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.5;
+    }
+    .field select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+                        linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+      background-position: calc(100% - 14px) 18px, calc(100% - 8px) 18px;
+      background-size: 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 28px;
+      cursor: pointer;
+    }
+    .field-error {
+      color: oklch(0.55 0.18 28);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .form-grid {
+      display: grid;
+      gap: 28px;
+    }
+    .form-grid .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+    @media (max-width: 720px) {
+      .form-grid .row-2 { grid-template-columns: 1fr; gap: 28px; }
+      .book-layout { grid-template-columns: 1fr !important; gap: 48px !important; }
+      .book-side { position: static !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel" src="sections-hero.jsx"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // Form delivery — submissions POST to Web3Forms, which forwards email to omar@brilliantdevcorp.com.
+    const W3F_KEY = "6ab0d420-3fd5-4a40-8a24-255db37121da";
+    const DELIVER_TO = "omar@brilliantdevcorp.com";
+
+    function BookForm() {
+      // Pre-check the cohort box if user clicked through a cohort CTA (?cohort=1).
+      const cohortDefault = typeof window !== 'undefined'
+        && new URLSearchParams(window.location.search).get('cohort') === '1';
+      const [form, setForm] = useState({
+        name: '', email: '', company: '', role: '',
+        size: '', revenue: '', workflow: '', cohort: cohortDefault, notes: ''
+      });
+      const [errors, setErrors] = useState({});
+      const [status, setStatus] = useState('idle'); // idle | sending | success | error
+      const [errorMsg, setErrorMsg] = useState('');
+
+      const update = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+      const validate = () => {
+        const e = {};
+        if (!form.name.trim()) e.name = 'Required';
+        if (!form.email.trim()) e.email = 'Required';
+        else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = 'Looks off';
+        if (!form.company.trim()) e.company = 'Required';
+        if (!form.workflow.trim()) e.workflow = 'Tell us a little';
+        setErrors(e);
+        return Object.keys(e).length === 0;
+      };
+
+      const onSubmit = async (ev) => {
+        ev.preventDefault();
+        if (!validate()) return;
+        setStatus('sending');
+        setErrorMsg('');
+
+        const payload = {
+          access_key: W3F_KEY,
+          subject: `Discovery call — ${form.company} (${form.name})`,
+          from_name: 'BrilliantOS · brilliantdevcorp.com',
+          // Standard fields
+          name: form.name,
+          email: form.email,
+          // Custom fields (Web3Forms passes through any extras into the email body)
+          company: form.company,
+          role: form.role || '—',
+          team_size: form.size || '—',
+          annual_revenue: form.revenue || '—',
+          founding_cohort: form.cohort ? 'Yes' : 'No',
+          workflow: form.workflow,
+          notes: form.notes || '—',
+          // Honeypot — bots will fill this; Web3Forms drops if non-empty
+          botcheck: ''
+        };
+
+        try {
+          const res = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data && data.success) {
+            setStatus('success');
+          } else {
+            setStatus('error');
+            setErrorMsg(data && data.message ? data.message : 'Submission failed. Please try again or email us directly.');
+          }
+        } catch (err) {
+          setStatus('error');
+          setErrorMsg('Network error. Please try again or email us directly.');
+        }
+      };
+
+      if (status === 'success') {
+        return (
+          <div style={{
+            border: '0.5px solid var(--rule)', borderRadius: 16,
+            padding: 56, background: 'var(--bg)', textAlign: 'left'
+          }}>
+            <div className="mono tiny" style={{ color: 'var(--accent)', letterSpacing: '.12em' }}>● REQUEST RECEIVED</div>
+            <h2 className="display" style={{ fontSize: 48, margin: '20px 0 16px', lineHeight: 1.05 }}>
+              We'll be in touch <span className="italic" style={{ color: 'var(--accent)' }}>within one business day.</span>
+            </h2>
+            <p style={{ fontSize: 17, color: 'var(--ink-2)', maxWidth: '52ch', margin: '0 0 32px', lineHeight: 1.55 }}>
+              Thanks {form.name.split(' ')[0] || 'there'}. Your discovery request just landed in our inbox.
+              Expect a short, human reply from a real person at BrilliantOS with a calendar link
+              and a couple of follow-up questions about <strong style={{ color: 'var(--ink)' }}>{form.company}</strong>.
+            </p>
+            <p className="small muted" style={{ marginBottom: 28 }}>
+              Need to reach us in the meantime? <a className="accent" href={`mailto:${DELIVER_TO}`}>{DELIVER_TO}</a>
+            </p>
+            <a href="index.html" className="btn secondary">← Back to BrilliantOS</a>
+          </div>
+        );
+      }
+
+      return (
+        <form className="form-grid" onSubmit={onSubmit} noValidate>
+          <div className="row-2">
+            <div className="field">
+              <label htmlFor="name">Your name</label>
+              <input id="name" type="text" value={form.name} onChange={e => update('name', e.target.value)} autoComplete="name" />
+              {errors.name && <div className="field-error">● {errors.name}</div>}
+            </div>
+            <div className="field">
+              <label htmlFor="email">Email</label>
+              <input id="email" type="email" value={form.email} onChange={e => update('email', e.target.value)} autoComplete="email" />
+              {errors.email && <div className="field-error">● {errors.email}</div>}
+            </div>
+          </div>
+
+          <div className="row-2">
+            <div className="field">
+              <label htmlFor="company">Company</label>
+              <input id="company" type="text" value={form.company} onChange={e => update('company', e.target.value)} autoComplete="organization" />
+              {errors.company && <div className="field-error">● {errors.company}</div>}
+            </div>
+            <div className="field">
+              <label htmlFor="role">Your role</label>
+              <select id="role" value={form.role} onChange={e => update('role', e.target.value)}>
+                <option value="">Select…</option>
+                <option>Founder / CEO</option>
+                <option>COO / Head of Ops</option>
+                <option>CFO / Finance lead</option>
+                <option>Head of Sales / Revenue</option>
+                <option>Other C-suite</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="row-2">
+            <div className="field">
+              <label htmlFor="size">Team size</label>
+              <select id="size" value={form.size} onChange={e => update('size', e.target.value)}>
+                <option value="">Select…</option>
+                <option>Just me</option>
+                <option>2–10</option>
+                <option>11–50</option>
+                <option>51–200</option>
+                <option>200+</option>
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="revenue">Annual revenue</label>
+              <select id="revenue" value={form.revenue} onChange={e => update('revenue', e.target.value)}>
+                <option value="">Select…</option>
+                <option>Pre-revenue</option>
+                <option>Under $500k</option>
+                <option>$500k – $2M</option>
+                <option>$2M – $10M</option>
+                <option>$10M – $50M</option>
+                <option>$50M+</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="field">
+            <label htmlFor="workflow">Which workflow would you autopilot first?</label>
+            <textarea
+              id="workflow"
+              value={form.workflow}
+              onChange={e => update('workflow', e.target.value)}
+              placeholder="E.g. We spend 12 hours/week building quotes from supplier price lists — would love that gone."
+            />
+            {errors.workflow && <div className="field-error">● {errors.workflow}</div>}
+          </div>
+
+          <div className="field">
+            <label htmlFor="notes">Anything else (optional)</label>
+            <textarea
+              id="notes"
+              value={form.notes}
+              onChange={e => update('notes', e.target.value)}
+              placeholder="Stack you use today, timing, budget, anything we should know."
+            />
+          </div>
+
+          <label style={{
+            display: 'flex', gap: 12, alignItems: 'flex-start',
+            padding: '16px 18px', border: '0.5px solid var(--rule)',
+            borderRadius: 12, cursor: 'pointer',
+            background: form.cohort ? 'var(--bg-2)' : 'transparent',
+            transition: 'background .15s'
+          }}>
+            <input
+              type="checkbox"
+              checked={form.cohort}
+              onChange={e => update('cohort', e.target.checked)}
+              style={{ marginTop: 3, accentColor: 'oklch(0.65 0.13 60)' }}
+            />
+            <div>
+              <div style={{ fontWeight: 500, color: 'var(--ink)' }}>
+                I'd like to apply for the founding cohort
+                <span className="mono tiny" style={{ color: 'var(--accent)', marginLeft: 10, letterSpacing: '.1em' }}>● 2 OF 5 SEATS LEFT</span>
+              </div>
+              <div className="small muted" style={{ marginTop: 4 }}>
+                Cohort pricing locked for life · public case study · quarterly product input call
+              </div>
+            </div>
+          </label>
+
+          {/* Honeypot field — hidden from humans, bots will fill it. */}
+          <input type="text" name="botcheck" tabIndex="-1" autoComplete="off" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, opacity: 0 }} />
+
+          {status === 'error' && (
+            <div style={{
+              padding: '14px 18px', border: '0.5px solid oklch(0.65 0.15 28)',
+              borderRadius: 10, background: 'oklch(0.96 0.02 28)',
+              color: 'oklch(0.35 0.15 28)', fontSize: 14
+            }}>
+              <strong>Couldn't send.</strong> {errorMsg} You can also email us directly at{' '}
+              <a href={`mailto:${DELIVER_TO}`} style={{ color: 'inherit', textDecoration: 'underline' }}>{DELIVER_TO}</a>.
+            </div>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', marginTop: 8 }}>
+            <button
+              type="submit"
+              className="btn primary"
+              disabled={status === 'sending'}
+              style={{
+                minWidth: 220, justifyContent: 'center',
+                opacity: status === 'sending' ? 0.6 : 1,
+                cursor: status === 'sending' ? 'wait' : 'pointer'
+              }}
+            >
+              {status === 'sending' ? 'Sending…' : <>Send discovery request <span className="arrow">→</span></>}
+            </button>
+            <span className="small muted">No newsletter. No CRM sequence. One human reply within one business day.</span>
+          </div>
+        </form>
+      );
+    }
+
+    function BookHero() {
+      return (
+        <section className="section" style={{ paddingBottom: 0 }}>
+          <div className="container">
+            <Reveal>
+              <div className="eyebrow" style={{ marginBottom: 24 }}>Book a discovery call</div>
+            </Reveal>
+            <div className="book-layout" style={{
+              display: 'grid', gridTemplateColumns: '1.05fr 1fr',
+              gap: 80, alignItems: 'start', marginTop: 12
+            }}>
+              <div className="book-side" style={{ position: 'sticky', top: 100 }}>
+                <Reveal delay={80}>
+                  <h1 className="display" style={{
+                    fontSize: 'clamp(48px, 7.5vw, 104px)',
+                    margin: 0, lineHeight: 0.98, letterSpacing: '-0.02em',
+                    maxWidth: '12ch'
+                  }}>
+                    Walk us through<br/>
+                    <span className="italic" style={{ color: 'var(--accent)' }}>one workflow.</span>
+                  </h1>
+                </Reveal>
+                <Reveal delay={160}>
+                  <p className="lede" style={{ marginTop: 28, maxWidth: '40ch' }}>
+                    30 minutes. One founder + us. No sales engineer, no deck.
+                    Tell us where the hours go and we'll tell you, honestly, if
+                    autopilot fits.
+                  </p>
+                </Reveal>
+                <Reveal delay={220}>
+                  <div style={{
+                    marginTop: 44, paddingTop: 32,
+                    borderTop: '0.5px solid var(--rule)',
+                    display: 'grid', gap: 26
+                  }}>
+                    {[
+                      { k: 'WHAT YOU GET', v: 'A walked-through workflow, a written diagnosis, a fit verdict.' },
+                      { k: 'HOW LONG',     v: '30 minutes. Async if you prefer — we can answer in writing first.' },
+                      { k: 'COST',         v: 'Free. We only sell if it earns 4× in year one.' },
+                      { k: 'WHO YOU MEET', v: 'The engineer who would actually build it. Not a salesperson.' }
+                    ].map(it => (
+                      <div key={it.k} style={{ display: 'grid', gridTemplateColumns: '160px 1fr', gap: 24 }}>
+                        <div className="mono tiny" style={{ letterSpacing: '.1em', color: 'var(--muted)' }}>{it.k}</div>
+                        <div className="small" style={{ color: 'var(--ink-2)' }}>{it.v}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Reveal>
+              </div>
+
+              <Reveal delay={120}>
+                <div style={{
+                  background: 'var(--bg-2)',
+                  border: '0.5px solid var(--rule)',
+                  borderRadius: 18, padding: 40
+                }}>
+                  <BookForm />
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function App() {
+      return (
+        <>
+          <Nav current="book" />
+          <main style={{ paddingBottom: 80 }}>
+            <BookHero />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
