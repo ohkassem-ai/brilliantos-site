@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/gtmportal/:path*",
+      "destination": "https://gtm-platform-beige.vercel.app/gtmportal/:path*"
+    }
+  ]
+}
