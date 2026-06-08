@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/gtmportal",
+      "destination": "https://gtm-platform-beige.vercel.app/gtmportal"
+    },
+    {
+      "source": "/gtmportal/",
+      "destination": "https://gtm-platform-beige.vercel.app/gtmportal"
+    },
+    {
       "source": "/gtmportal/:path*",
       "destination": "https://gtm-platform-beige.vercel.app/gtmportal/:path*"
     }
