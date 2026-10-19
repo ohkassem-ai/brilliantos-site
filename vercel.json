@@ -12,5 +12,30 @@
       "source": "/gtmportal/:path*",
       "destination": "https://gtm-platform-beige.vercel.app/gtmportal/:path*"
     }
+  ],
+  "functions": {
+    "api/msaaed.js": {
+      "maxDuration": 30
+    }
+  },
+  "headers": [
+    {
+      "source": "/preview/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/preview",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    }
   ]
 }
