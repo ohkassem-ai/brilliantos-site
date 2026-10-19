@@ -4,7 +4,7 @@
 import { next } from "@vercel/functions";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-export const config = { matcher: ["/preview", "/preview/:path*", "/api/msaaed"] };
+export const config = { runtime: "nodejs", matcher: ["/preview", "/preview/:path*", "/api/msaaed"] }; // Node runtime: node:crypto
 
 const COOKIE = "__Host-pv";
 const DAYS = 30;
