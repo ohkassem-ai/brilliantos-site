@@ -1,0 +1,13 @@
+# Netlify copy of this site: the client preview lives only on Vercel (www.brilliantdevcorp.com/preview),
+# behind a passcode (middleware.js). Netlify does not run that gate, so it does not serve /preview at all.
+[[redirects]]
+  from = "/preview"
+  to = "/"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/preview/*"
+  to = "/"
+  status = 302
+  force = true

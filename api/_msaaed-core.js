@@ -68,11 +68,13 @@ export function makeHandler(getClient) {
         usage: { input: r.usage.input_tokens, cached: r.usage.cache_read_input_tokens || 0, output: r.usage.output_tokens },
       });
     } catch (e) {
-      if (e instanceof Anthropic.RateLimitError) return res.status(429).json({ error: "Msaaed is busy. Try again in a minute." });
-      if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) { console.error("msaaed: API key rejected", e.status); return res.status(503).json({ error: "Msaaed is not set up correctly (API key)." }); }
-      if (e instanceof Anthropic.BadRequestError) { console.error("msaaed: bad request", e.message); return res.status(400).json({ error: "Msaaed could not read that question." }); }
+      // a short reason from the API (no secrets in it) helps the site owner fix set-up problems; the page sits behind the passcode
+      const reason = e instanceof Anthropic.APIError ? `${e.status || ""} ${e.error?.error?.type || ""}: ${String(e.error?.error?.message || e.message || "").slice(0, 200)}`.trim() : undefined;
+      if (e instanceof Anthropic.RateLimitError) return res.status(429).json({ error: "Msaaed is busy. Try again in a minute.", reason });
+      if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) { console.error("msaaed: API key rejected", e.status); return res.status(503).json({ error: "Msaaed is not set up correctly (API key).", reason }); }
+      if (e instanceof Anthropic.BadRequestError) { console.error("msaaed: bad request", e.message); return res.status(400).json({ error: "Claude did not accept the request.", reason }); }
       if (e instanceof Anthropic.APIConnectionTimeoutError) return res.status(504).json({ error: "That took too long. Try again." });
-      if (e instanceof Anthropic.APIError) { console.error("msaaed: API error", e.status, e.message); return res.status(502).json({ error: "Msaaed could not answer just now. Try again." }); }
+      if (e instanceof Anthropic.APIError) { console.error("msaaed: API error", e.status, e.message); return res.status(502).json({ error: "Msaaed could not answer just now. Try again.", reason }); }
       console.error("msaaed:", e);
       return res.status(500).json({ error: "Msaaed hit an error. Try again." });
     }

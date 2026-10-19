@@ -3119,8 +3119,10 @@ async function msAsk(q) {
       const r = await fetch(MS_API, { method: "POST", headers: { "content-type": "application/json", ...(MS_CODE ? { "x-msaaed-code": MS_CODE } : {}) }, body: JSON.stringify({ messages: hist, reference: msaaedReference(), snapshot: msaaedSnapshot() }), signal: MS.ctl.signal });
       clearTimeout(tm);
       const j = await r.json().catch(() => ({}));
-      if (r.status === 401) throw new Error(msMsg(q, "Msaaed needs the access link. Open the link you were sent.", "يحتاج مساعد إلى رابط الدخول. افتح الرابط الذي أُرسل إليك."));
-      if (!r.ok) throw new Error(isAr(q) && r.status !== 503 ? "لم يتمكن مساعد من الإجابة الآن. حاول مرة أخرى." : j.error || (r.status === 404 ? "Msaaed is not connected on this copy of the page." : `Msaaed could not answer (error ${r.status}).`));
+      if (r.status === 401) throw new Error(msMsg(q, "Your access has ended. Reload the page and enter the passcode.", "انتهت صلاحية الدخول. أعد تحميل الصفحة وأدخل رمز الدخول."));
+      if (!r.ok) throw new Error((isAr(q) && r.status !== 503 ? "لم يتمكن مساعد من الإجابة الآن. حاول مرة أخرى." : j.error || (r.status === 404 ? "Msaaed is not connected on this copy of the page." : `Msaaed could not answer (error ${r.status}).`)) + (j.reason ? `
+
+Detail: ${j.reason}` : ""));
       bot.content = j.text || "No answer came back. Try again.";
     }
   } catch (e) { bot.content = e.name === "AbortError" ? msMsg(q, "That took too long. Try again.", "استغرق ذلك وقتاً طويلاً. حاول مرة أخرى.") : (e.message || msMsg(q, "Msaaed could not answer.", "لم يتمكن مساعد من الإجابة.")); bot.err = true; }
