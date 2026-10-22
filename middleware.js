@@ -1,13 +1,13 @@
 // Passcode gate for /preview and its assistant API (/api/msaaed). Runs before the CDN cache.
 // Set PREVIEW_PASSCODE in the Vercel project. Changing it signs everyone out.
-// Visitors enter the passcode once (or open /preview?code=<passcode>); a secure cookie keeps them in for 30 days.
+// Visitors enter the passcode once (or open /preview?code=<passcode>); a secure cookie keeps them in for 7 days.
 import { next } from "@vercel/functions";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const config = { runtime: "nodejs", matcher: ["/preview", "/preview/:path*", "/api/msaaed"] }; // Node runtime: node:crypto
 
 const COOKIE = "__Host-pv";
-const DAYS = 30;
+const DAYS = 7; // one week, then the passcode is asked again
 const tokenFor = code => createHmac("sha256", code).update("brilliantdevcorp-preview-v1").digest("base64url");
 const same = (a, b) => { const x = Buffer.from(a), y = Buffer.from(b); return x.length === y.length && timingSafeEqual(x, y); };
 const cookie = (req, name) => { for (const part of (req.headers.get("cookie") || "").split(/;\s*/)) { const i = part.indexOf("="); if (i > 0 && part.slice(0, i) === name) return part.slice(i + 1); } return ""; };
